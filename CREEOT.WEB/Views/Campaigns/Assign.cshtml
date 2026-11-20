@@ -1,0 +1,231 @@
+﻿@model CREEOT.WEB.Models.AssignWorkViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = $"Assign Deliverable to {Model.InfluencerName} — CREEOT";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/creeot-auth.css" asp-append-version="true" />
+    <style>
+        .assign-wrapper {
+            padding: 120px 0 80px;
+        }
+
+        .assign-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .creator-card-summary {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px;
+            backdrop-filter: blur(25px);
+        }
+
+        .creator-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .creator-avatar-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(51, 68, 255, 0.2), rgba(0, 229, 163, 0.2));
+            border: 1px solid var(--mint);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--mint);
+            font-weight: 800;
+        }
+
+        .creator-details h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 4px 0;
+        }
+
+        .creator-meta-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .milestone-calculator-box {
+            background: rgba(7, 11, 25, 0.7);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-top: 20px;
+        }
+
+        .milestone-calculator-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .milestone-calculator-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .milestone-calculator-row strong {
+            color: var(--mint);
+        }
+
+        @@media (max-width: 992px) {
+            .assign-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<div class="container assign-wrapper">
+    <div class="dash-welcome-card" style="margin-bottom: 30px;">
+        <div>
+            <span class="badge-role">Assignment Workflow</span>
+            <h1 class="welcome-heading">Assign Deliverable Scope</h1>
+            <p class="welcome-subtext">Delegate deliverables, set deadlines, and split the fee into structured escrow milestones.</p>
+        </div>
+        <div class="dash-quick-actions">
+            <a asp-controller="Explore" asp-action="Index" class="btn-dash btn-dash-secondary">← Back to Talent</a>
+        </div>
+    </div>
+
+    <div class="assign-grid">
+        <!-- Form Left Rail -->
+        <div class="auth-card" style="box-shadow: none;">
+            <form asp-action="Assign" asp-controller="Campaigns" method="post" id="assignForm" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="InfluencerId" />
+
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <div class="form-group">
+                    <label asp-for="CampaignId" class="form-label">Attach to Master Campaign</label>
+                    <select asp-for="CampaignId" class="form-control">
+                        @foreach (var c in Model.AvailableCampaigns)
+                        {
+                            <option value="@c.CampaignId">@c.Title (Budget: ₹@c.TotalBudget.ToString("N0") @c.Currency)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CampaignId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DeliverableScope" class="form-label"></label>
+                    <input asp-for="DeliverableScope" class="form-control" placeholder="e.g. 1x 60s Instagram Reel + 2x Stories" />
+                    <span asp-validation-for="DeliverableScope" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="AgreedFee" class="form-label">Agreed Compensation (@Model.Currency)</label>
+                    <input asp-for="AgreedFee" id="agreedFeeInput" type="number" step="100" class="form-control" />
+                    <span asp-validation-for="AgreedFee" class="text-danger"></span>
+                </div>
+
+                <div class="auth-two-cols">
+                    <div class="form-group">
+                        <label asp-for="DraftDueDate" class="form-label"></label>
+                        <input asp-for="DraftDueDate" type="date" class="form-control" value="@Model.DraftDueDate.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="DraftDueDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="LivePublishDueDate" class="form-label"></label>
+                        <input asp-for="LivePublishDueDate" type="date" class="form-control" value="@Model.LivePublishDueDate.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="LivePublishDueDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="SpecialInstructions" class="form-label"></label>
+                    <textarea asp-for="SpecialInstructions" rows="3" class="form-control" placeholder="Specific talking points, mandatory hashtags, forbidden competitors, brand tone..."></textarea>
+                    <span asp-validation-for="SpecialInstructions" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-auth-submit" style="margin-top: 14px;">
+                    Lock Assignment &amp; Configure Escrow →
+                </button>
+            </form>
+        </div>
+
+        <!-- Creator Profile & Milestone Breakdown Right Rail -->
+        <div class="creator-card-summary">
+            <div class="creator-header">
+                <div class="creator-avatar-badge">
+                    @(Model.InfluencerName.Length > 0 ? Model.InfluencerName[0].ToString() : "C")
+                </div>
+                <div class="creator-details">
+                    <h3>@Model.InfluencerName</h3>
+                    <div class="creator-meta-pills">
+                        <span class="badge-escrow">@Model.Handle</span>
+                        <span class="stage-tag">@Model.PrimaryPlatform.ToUpper()</span>
+                        <span class="stage-tag">@Model.PrimaryNiche</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="font-size: 0.85rem; color: var(--text-sub); line-height: 1.6;">
+                <p>Standard Starting Rate: <strong>₹@Model.SuggestedBasePrice.ToString("N0") @Model.Currency</strong></p>
+            </div>
+
+            <!-- Real-Time 2-Stage Escrow Split Preview -->
+            <div class="milestone-calculator-box">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 10px;">
+                    Automated 2-Stage Milestone Split
+                </h4>
+
+                <div class="milestone-calculator-row">
+                    <span>Stage 1: Script &amp; Draft Preview (40%)</span>
+                    <strong id="draftAmountText">₹@((Model.AgreedFee * 0.40m).ToString("N0"))</strong>
+                </div>
+                <div class="milestone-calculator-row">
+                    <span>Stage 2: Live Publication &amp; Proof (60%)</span>
+                    <strong id="liveAmountText">₹@((Model.AgreedFee * 0.60m).ToString("N0"))</strong>
+                </div>
+            </div>
+
+            <div class="auth-security-badge" style="margin-top: 24px;">
+                <span class="lock-icon">&#128274;</span>
+                <span>Both stages protected by the CREEOT Escrow Vault</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Update milestone preview dynamically as brand alters the agreed fee
+        const feeInput = document.getElementById('agreedFeeInput');
+        const draftTxt = document.getElementById('draftAmountText');
+        const liveTxt = document.getElementById('liveAmountText');
+
+        feeInput?.addEventListener('input', (e) => {
+            const fee = parseFloat(e.target.value) || 0;
+            const draft = Math.round(fee * 0.40);
+            const live = fee - draft;
+
+            draftTxt.textContent = '₹' + draft.toLocaleString();
+            liveTxt.textContent = '₹' + live.toLocaleString();
+        });
+    </script>
+}

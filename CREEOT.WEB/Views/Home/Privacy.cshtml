@@ -1,0 +1,209 @@
+﻿@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "CREEOT - Privacy Policy & Data Protection";
+    var lastUpdated = "September 2026";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-pages.css" asp-append-version="true" />
+}
+
+<main class="privacy-page">
+    <!-- Header Banner -->
+    <section class="privacy-hero">
+        <div class="container">
+            <div class="badge-verified">
+                <span class="pulse-dot"></span> Regulatory & Data Security Compliance
+            </div>
+            <h1 class="hero-title">Privacy Policy & Escrow Data Protection</h1>
+            <p class="hero-desc">
+                Transparency in how CREEOT collects, processes, and safeguards personal identity, social telemetry, and escrow transactions across India, UAE, and Qatar.
+            </p>
+            <div class="policy-meta-pill">
+                <span>Last Updated: <strong>@lastUpdated</strong></span>
+                <span class="meta-separator">•</span>
+                <span>Version: <strong>2.4 (Enterprise Multi-Jurisdiction)</strong></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container with Sticky Sidebar Navigation -->
+    <div class="container privacy-layout">
+        <!-- Sticky Left-Rail Table of Contents -->
+        <aside class="privacy-toc-wrap">
+            <nav class="privacy-toc">
+                <span class="toc-title">Contents</span>
+                <ul>
+                    <li><a href="#overview">1. Platform Scope & Principles</a></li>
+                    <li><a href="#information-collected">2. Information We Collect</a></li>
+                    <li><a href="#escrow-financial">3. Escrow Financial Data</a></li>
+                    <li><a href="#social-telemetry">4. Social Media Telemetry</a></li>
+                    <li><a href="#how-we-use-data">5. How We Use Information</a></li>
+                    <li><a href="#cross-border">6. Cross-Border Transfers</a></li>
+                    <li><a href="#retention">7. Retention & Purging</a></li>
+                    <li><a href="#user-rights">8. Your Statutory Rights</a></li>
+                    <li><a href="#contact">9. Data Protection Officer</a></li>
+                </ul>
+
+                <div class="privacy-support-card">
+                    <h5>Questions on Escrow Security?</h5>
+                    <p>Contact our compliance board directly for data audit inquiries.</p>
+                    <a href="mailto:privacy@creeot.local" class="btn-portal btn-ghost btn-sm" style="width:100%; justify-content:center;">
+                        Contact Privacy Desk
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Right Content Body -->
+        <article class="privacy-article">
+            <!-- Section 1 -->
+            <section id="overview" class="policy-block">
+                <h2>1. Platform Scope & Operating Principles</h2>
+                <p>
+                    CREEOT ("we", "us", or "our") operates a dual-sided influencer marketplace and escrow settlement mechanism bridging brands ("Clients") and content creators ("Influencers"). This Privacy Policy outlines our strict data minimization principles under relevant data protection acts, including the <em>Digital Personal Data Protection Act (DPDPA - India)</em>, <em>Federal Decree-Law No. 45 on Personal Data Protection (UAE)</em>, and <em>Law No. 13 on Personal Data Privacy Protection (Qatar)</em>.
+                </p>
+                <div class="policy-highlight-box">
+                    <strong>Core Principle:</strong> CREEOT will never monetize, lease, or resell your personal profile details, contact lists, or social media follower graphs to third-party data brokers.
+                </div>
+            </section>
+
+            <!-- Section 2 -->
+            <section id="information-collected" class="policy-block">
+                <h2>2. Information We Collect</h2>
+                <p>To provide escrow protection and creator discovery, we collect data across three distinct classifications:</p>
+
+                <div class="data-table-wrap">
+                    <table class="policy-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Types of Data Gathered</th>
+                                <th>Source / Collection Point</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Identity & Contact</strong></td>
+                                <td>Full legal name, business email, verified phone numbers, corporate tax IDs (GST / VAT / TRN), government ID for KYC/KYB.</td>
+                                <td>Direct submission during Account Registration & KYC onboarding.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Profile & Media Roster</strong></td>
+                                <td>Social handles (username), niche categorization, geographical target audience, bio, avatar, and media kit assets.</td>
+                                <td>Influencer onboarding forms and authenticated profile synchronization.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Contract & Deliverables</strong></td>
+                                <td>Campaign briefs, digital SOW scopes, draft media uploads, published URL links, live view timestamps, and client inspection logs.</td>
+                                <td>Direct platform interaction and milestone submission workflows.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section 3 -->
+            <section id="escrow-financial" class="policy-block">
+                <h2>3. Escrow Financial Data & Ring-Fenced Settlement</h2>
+                <p>
+                    Because CREEOT acts as a milestone escrow custodian, we uphold strict standards of payment safety and isolation:
+                </p>
+                <ul class="policy-bullets">
+                    <li>
+                        <strong>Card & Banking Tokenization:</strong> CREEOT does not store full credit card numbers or banking passwords on our local databases. All payment methods are tokenized through PCI-DSS Level 1 compliant payment gateways.
+                    </li>
+                    <li>
+                        <strong>Escrow Vault Verification:</strong> Payout details (IBAN, IFSC, SWIFT) for creators are encrypted in our database using AES-256 encryption at rest and are accessible strictly to automated payout disbursement nodes.
+                    </li>
+                    <li>
+                        <strong>Anti-Money Laundering (AML) Compliance:</strong> In accordance with financial guidelines in Qatar (QCB), UAE (CBUAE), and India (RBI), escrow disbursements exceeding regional statutory thresholds undergo automated AML screening against global sanctions lists.
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Section 4 -->
+            <section id="social-telemetry" class="policy-block">
+                <h2>4. Social Media Telemetry & Agent Analytics</h2>
+                <p>
+                    Our platform utilizes scheduled background agent workers and verified API connectors (including third-party analytics services like Modash) to index influencer performance metrics:
+                </p>
+                <div class="policy-card-grid">
+                    <div class="policy-subcard">
+                        <h4>Public Telemetry Only</h4>
+                        <p>We only monitor and aggregate public engagement statistics: average views, follower metrics, engagement ratios, and public comments on verified campaign posts.</p>
+                    </div>
+                    <div class="policy-subcard">
+                        <h4>Zero Private Access</h4>
+                        <p>CREEOT never requests passwords, private direct messages (DMs), or unshared personal photos from your connected social platforms.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5 -->
+            <section id="how-we-use-data" class="policy-block">
+                <h2>5. How We Use Information</h2>
+                <p>We process collected data exclusively for the following operational reasons:</p>
+                <ol class="policy-numbered">
+                    <li><strong>Executing Escrow Agreements:</strong> Locking funds, verifying content milestones, and executing wallet transfers upon deliverable approval.</li>
+                    <li><strong>Marketplace Discovery & Scoring:</strong> Calculating verified rating scores, review counts, trending ranks, and estimated price brackets for the Explore portal.</li>
+                    <li><strong>Dispute Resolution & Audit Trials:</strong> Providing an immutable audit log of communication, file versions, and approvals if neutral mediation is requested.</li>
+                    <li><strong>Security & Anti-Fraud Monitoring:</strong> Preventing synthetic follower inflation, account takeovers, and unauthorized milestone chargebacks.</li>
+                </ol>
+            </section>
+
+            <!-- Section 6 -->
+            <section id="cross-border" class="policy-block">
+                <h2>6. Cross-Border Data Transfers</h2>
+                <p>
+                    CREEOT operates across multiple international business corridors (India, the United Arab Emirates, and the State of Qatar). Cross-border communications (e.g., an Indian brand hiring a creator based in Dubai or Doha) are transmitted over encrypted TLS 1.3 channels. We ensure that non-domestic cloud storage instances conform to standard contractual clauses (SCCs) and regional data sovereignty regulations.
+                </p>
+            </section>
+
+            <!-- Section 7 -->
+            <section id="retention" class="policy-block">
+                <h2>7. Retention & Purging</h2>
+                <p>
+                    We retain data only as long as necessary to fulfill marketplace contracts and statutory financial obligations:
+                </p>
+                <ul class="policy-bullets">
+                    <li><strong>Transactional & Escrow Logs:</strong> Retained for a mandatory statutory period of 7 years in compliance with international commercial accounting laws.</li>
+                    <li><strong>Public Metrics Snapshots:</strong> Time-series analytics in <code>dbo.InfluencersMetricsSnapshot</code> are retained for 365 days to render 12-month trend charts before being rolled into historical monthly averages.</li>
+                    <li><strong>Account Deletion:</strong> You may request profile deactivation at any time. Non-financial identifying data is purged within 30 days of verified request.</li>
+                </ul>
+            </section>
+
+            <!-- Section 8 -->
+            <section id="user-rights" class="policy-block">
+                <h2>8. Your Statutory Rights</h2>
+                <p>Depending on your jurisdiction, you possess the following protected privacy rights:</p>
+                <div class="rights-badge-grid">
+                    <div class="right-pill">Right to Access & Portability</div>
+                    <div class="right-pill">Right to Rectification</div>
+                    <div class="right-pill">Right to Erasure ("Forgotten")</div>
+                    <div class="right-pill">Right to Withdraw Consent</div>
+                    <div class="right-pill">Right to Grievance Redressal</div>
+                </div>
+                <p style="margin-top:14px;">
+                    To invoke any of these rights, submit a signed request to our privacy desk at <code>dpo@creeot.local</code>. We verify requester identity before processing any data modifications.
+                </p>
+            </section>
+
+            <!-- Section 9 -->
+            <section id="contact" class="policy-block">
+                <h2>9. Data Protection Officer (DPO) Contact</h2>
+                <p>
+                    If you have questions regarding this policy, escrow compliance, or our automated analytics agents, reach out directly to our compliance officers:
+                </p>
+                <div class="contact-box">
+                    <div>
+                        <strong>CREEOT Platform Data Protection Desk</strong>
+                        <p>Attn: Chief Compliance & Information Security Officer</p>
+                        <p>Email: <a href="mailto:privacy@creeot.local" style="color:var(--mint);">privacy@creeot.local</a></p>
+                        <p>Support Hours: Monday – Friday, 09:00 – 18:00 (IST / GST / AST)</p>
+                    </div>
+                </div>
+            </section>
+        </article>
+    </div>
+</main>

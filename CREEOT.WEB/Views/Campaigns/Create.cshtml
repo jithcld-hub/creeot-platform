@@ -1,0 +1,108 @@
+﻿@model CREEOT.WEB.Models.CreateCampaignViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "Launch Protected Campaign — CREEOT";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/creeot-pages.css" asp-append-version="true" />
+}
+
+<div class="auth-wrapper" style="padding-top: 130px;">
+    <div class="auth-container" style="max-width: 780px;">
+        <div class="auth-brand-header">
+            <div class="badge-verified">
+                <span class="pulse-dot"></span> Escrow Milestone Protection
+            </div>
+            <h1 class="auth-brand-title">Launch New Campaign</h1>
+            <p class="auth-brand-subtitle">Agree on terms and lock funds safely in holding before production begins.</p>
+        </div>
+
+        <div class="auth-card">
+            @if (!string.IsNullOrEmpty(Model.PreselectedInfluencerName))
+            {
+                <div class="auth-alert-success">
+                    <span class="auth-alert-icon">✓</span>
+                    <div class="auth-alert-body">
+                        <strong>Direct Assignment</strong>
+                        <p>Assigning scope to <strong>@Model.PreselectedInfluencerName</strong></p>
+                    </div>
+                </div>
+            }
+
+            <form asp-action="Create" asp-controller="Campaigns" method="post" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="PreselectedInfluencerId" />
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <div class="form-group">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" placeholder="e.g. Summer Skincare Brand Launch - 1x Reel + 2x Stories" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="auth-two-cols">
+                    <div class="form-group">
+                        <label asp-for="Platform" class="form-label"></label>
+                        <select asp-for="Platform" class="form-control">
+                            <option value="instagram">Instagram</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="tiktok">TikTok</option>
+                        </select>
+                        <span asp-validation-for="Platform" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PrimaryNiche" class="form-label"></label>
+                        <select asp-for="PrimaryNiche" class="form-control">
+                            <option value="lifestyle">Lifestyle & Fashion</option>
+                            <option value="tech">Tech & Gadgets</option>
+                            <option value="food">Food & Culinary</option>
+                            <option value="fitness">Fitness & Wellness</option>
+                        </select>
+                        <span asp-validation-for="PrimaryNiche" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="auth-two-cols">
+                    <div class="form-group">
+                        <label asp-for="TotalBudget" class="form-label"></label>
+                        <input asp-for="TotalBudget" type="number" step="0.01" class="form-control" placeholder="e.g. 25000" />
+                        <span asp-validation-for="TotalBudget" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Currency" class="form-label"></label>
+                        <select asp-for="Currency" class="form-control">
+                            <option value="INR">India (INR)</option>
+                            <option value="AED">UAE (AED)</option>
+                            <option value="QAR">Qatar (QAR)</option>
+                        </select>
+                        <span asp-validation-for="Currency" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DeadlineDate" class="form-label"></label>
+                    <input asp-for="DeadlineDate" type="date" class="form-control" />
+                    <span asp-validation-for="DeadlineDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" rows="4" class="form-control" placeholder="Provide talking points, required tags, forbidden mentions, and approval windows..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-auth-submit" style="margin-top: 15px;">
+                    Generate Scope & Proceed to Escrow Vault →
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,151 @@
+﻿@model CREEOT.WEB.Models.LoginViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "Sign In — CREEOT Escrow Platform";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-auth.css" asp-append-version="true" />
+}
+
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <!-- Brand Header -->
+        <div class="auth-brand-header">
+            <a asp-controller="Home" asp-action="Index" class="auth-logo-symbol" title="CREEOT Home">
+                <svg viewBox="0 0 100 100" fill="none" style="width:100%; height:100%;">
+                    <path d="M 68 18 A 38 38 0 1 0 68 82" stroke="#3344ff" stroke-width="14" stroke-linecap="round" />
+                    <line x1="50" y1="36" x2="82" y2="36" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                    <line x1="50" y1="50" x2="82" y2="50" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                    <line x1="50" y1="64" x2="82" y2="64" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                </svg>
+            </a>
+            <h1 class="auth-brand-title">CRE<span>E</span>OT</h1>
+            <p class="auth-brand-subtitle" id="portalSub">Sign in to your protected account</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="auth-card">
+            @if (TempData["SuccessMessage"] != null)
+{
+    <div class="auth-alert-success" role="alert">
+        <span class="auth-alert-icon">✓</span>
+        <div class="auth-alert-body">
+            <strong>Registration Successful</strong>
+            <p>@TempData["SuccessMessage"]</p>
+        </div>
+    </div>
+}
+            <form asp-action="Login" asp-controller="Account" method="post" id="loginForm" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ReturnUrl" />
+
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <!-- Role Switcher -->
+                <div class="auth-role-switch">
+                    <label class="auth-role-option @(Model.Role == CREEOT.WEB.Models.UserRole.Client ? "active" : "")" id="opt-client">
+                        <input type="radio" asp-for="Role" value="@CREEOT.WEB.Models.UserRole.Client" id="role-client" />
+                        <span>🏢 Brand / Business</span>
+                    </label>
+                    <label class="auth-role-option @(Model.Role == CREEOT.WEB.Models.UserRole.Influencer ? "active" : "")" id="opt-influencer">
+                        <input type="radio" asp-for="Role" value="@CREEOT.WEB.Models.UserRole.Influencer" id="role-influencer" />
+                        <span>🎬 Influencer / Creator</span>
+                    </label>
+                </div>
+                <span asp-validation-for="Role" class="text-danger"></span>
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label" id="emailLabel">
+                        @(Model.Role == CREEOT.WEB.Models.UserRole.Client ? "Company / Work Email" : "Registered Creator Email")
+                    </label>
+                    <input asp-for="Email" class="form-control" placeholder="you@example.com" autocomplete="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <label asp-for="Password" class="form-label" style="margin-bottom:0;"></label>
+                        <a asp-action="ForgotPassword" asp-controller="Account" class="link-forgot">Forgot?</a>
+                    </div>
+                    <div class="password-wrapper">
+                        <input asp-for="Password" class="form-control" id="passwordInput" placeholder="••••••••" autocomplete="current-password" />
+                        <button type="button" class="btn-toggle-pw" id="togglePassword" aria-label="Toggle password view">&#128065;</button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="auth-check">
+                    <input type="checkbox" asp-for="RememberMe" id="RememberMe" />
+                    <label for="RememberMe">
+                        Keep me signed in for 30 days
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-auth-submit" id="submitBtn">
+                    @(Model.Role == CREEOT.WEB.Models.UserRole.Client ? "Sign In as Brand" : "Sign In as Creator")
+                </button>
+            </form>
+
+            <!-- Escrow Badge -->
+            <div class="auth-security-badge">
+                <span class="lock-icon">&#128274;</span>
+                <span>256-bit Encrypted Escrow Auth</span>
+            </div>
+
+            <div class="auth-footer-text">
+                Don't have an account yet? 
+                <a asp-action="SignUp" asp-controller="Account">Register Free</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const clientOpt = document.getElementById('opt-client');
+            const influencerOpt = document.getElementById('opt-influencer');
+            const roleClientRadio = document.getElementById('role-client');
+            const roleInfluencerRadio = document.getElementById('role-influencer');
+            const submitBtn = document.getElementById('submitBtn');
+            const emailLabel = document.getElementById('emailLabel');
+            const portalSub = document.getElementById('portalSub');
+            const passwordInput = document.getElementById('passwordInput');
+            const togglePassword = document.getElementById('togglePassword');
+
+            function applyRole(isClient) {
+                if (isClient) {
+                    clientOpt.classList.add('active');
+                    influencerOpt.classList.remove('active');
+                    roleClientRadio.checked = true;
+                    submitBtn.textContent = 'Sign In as Brand';
+                    emailLabel.textContent = 'Company / Work Email';
+                    portalSub.textContent = 'Sign in to access your Brand & Escrow Vault';
+                } else {
+                    influencerOpt.classList.add('active');
+                    clientOpt.classList.remove('active');
+                    roleInfluencerRadio.checked = true;
+                    submitBtn.textContent = 'Sign In as Creator';
+                    emailLabel.textContent = 'Registered Creator Email';
+                    portalSub.textContent = 'Sign in to review campaigns & wallet payouts';
+                }
+            }
+
+            clientOpt.addEventListener('click', () => applyRole(true));
+            influencerOpt.addEventListener('click', () => applyRole(false));
+
+            // Show/Hide Password
+            togglePassword.addEventListener('click', () => {
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                togglePassword.innerHTML = isPassword ? '&#128064;' : '&#128065;';
+            });
+        });
+    </script>
+}

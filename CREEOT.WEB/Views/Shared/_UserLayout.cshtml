@@ -1,0 +1,210 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ApplicationUser? currentUser = null;
+    string initials = "CR";
+    string displayName = "Member";
+
+    if (SignInManager.IsSignedIn(User))
+    {
+        currentUser = await UserManager.GetUserAsync(User);
+        if (currentUser != null)
+        {
+            displayName = !string.IsNullOrWhiteSpace(currentUser.FullName) 
+                ? currentUser.FullName 
+                : (currentUser.UserName ?? "Member");
+
+            var parts = displayName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            initials = parts.Length >= 2
+                ? $"{parts[0][0]}{parts[^1][0]}".ToUpper()
+                : displayName.Substring(0, Math.Min(2, displayName.Length)).ToUpper();
+        }
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- Shared Ambient Atmosphere -->
+    <div class="blue-atmosphere">
+        <div class="mesh-blob-1"></div>
+        <div class="mesh-blob-2"></div>
+        <div class="ambient-grid"></div>
+    </div>
+
+    <!-- Sticky App Header -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a asp-controller="Home" asp-action="Index" class="logo-box">
+                <div class="logo-symbol">
+                    <svg viewBox="0 0 100 100" class="w-full h-full" fill="none" style="width:100%; height:100%;">
+                        <path d="M 68 18 A 38 38 0 1 0 68 82" stroke="#3344ff" stroke-width="14" stroke-linecap="round" />
+                        <line x1="50" y1="36" x2="82" y2="36" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                        <line x1="50" y1="50" x2="82" y2="50" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                        <line x1="50" y1="64" x2="82" y2="64" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="logo-name">CRE<span>E</span>OT</div>
+                    <div class="logo-tagline">Influencers • Brands • Growth</div>
+                </div>
+                @* <div>
+                    <!-- Replaced logo-name and logo-tagline text divs with the new visual brand asset -->
+                    <img src="~/images/creeot-banner.png" alt="CREEOT - Influencers • Brand • Growth" style="height: auto; max-width: 260px; display: block;" />
+                </div> *@
+            </a>
+
+            <ul class="nav-menu">
+                <li class="nav-dropdown">
+                    <a href="javascript:void(0)" class="dropdown-trigger">
+                        Explore Creators <span class="arrow-down">▾</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a asp-controller="Explore" asp-action="Index" class="dropdown-item">
+                            <div class="item-icon">✔</div>
+                            <div>
+                                <strong>CREEOT Vetted Roster</strong>
+                                <p>In-house verified talent ready for escrow campaigns</p>
+                            </div>
+                        </a>
+
+                        <div class="dropdown-divider"></div>
+
+                        <a asp-controller="Explore" asp-action="Global" class="dropdown-item">
+                            <div class="item-icon" style="color:#7d96ff;">&#127760;</div>
+                            <div>
+                                <strong>Global Discovery Engine</strong>
+                                <p>Search 250M+ external social media profiles</p>
+                            </div>
+                        </a>
+                    </div>
+                </li>
+                <li><a asp-controller="Home" asp-action="HowItWorks">How It Works</a></li>
+                <li><a asp-controller="Home" asp-action="EscrowSecurity">Escrow Security</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                @if (SignInManager.IsSignedIn(User) && currentUser != null)
+                {
+                    @if (User.IsInRole("Client"))
+                    {
+                        <a asp-controller="Campaigns" asp-action="Create" class="btn-portal btn-mint">+ Launch Campaign</a>
+                    }
+
+                    <!-- User Profile Dropdown Pill -->
+                    <div class="user-profile-menu">
+                        <button class="profile-pill-trigger" id="profileDropdownBtn" type="button" aria-expanded="false">
+                            <span class="user-avatar @(User.IsInRole("Influencer") ? "creator-avatar" : "client-avatar")">@initials</span>
+                            <div class="user-meta-text">
+                                <span class="user-name">@displayName</span>
+                                <span class="role-badge @(User.IsInRole("Influencer") ? "creator-tag" : "client-tag")">
+                                    @(User.IsInRole("Influencer") ? "Creator" : User.IsInRole("Client") ? "Client" : "Member")
+                                </span>
+                            </div>
+                            <span class="arrow-down">▾</span>
+                        </button>
+
+                        <div class="profile-dropdown-content" id="profileDropdownContent">
+                            <div class="dropdown-header">
+                                <p class="dropdown-user-email">@(currentUser.Email ?? User.Identity?.Name)</p>
+                                <span class="status-indicator online">
+                                    @(User.IsInRole("Influencer") ? "Verified Creator" : User.IsInRole("Client") ? "Verified Client" : "Verified User")
+                                </span>
+                            </div>
+
+                            <div class="dropdown-divider"></div>
+
+                            @if (User.IsInRole("Influencer"))
+                            {
+                                <a asp-controller="Creator" asp-action="Dashboard" class="dropdown-item">📊 Creator Dashboard</a>
+                                <a asp-controller="Creator" asp-action="Earnings" class="dropdown-item">💰 Escrow Wallet & Payouts</a>
+                                <a asp-controller="Creator" asp-action="Settings" class="dropdown-item">⚙️ Account Settings</a>
+                            }
+                            else if (User.IsInRole("Client"))
+                            {
+                                <a asp-controller="Client" asp-action="Dashboard" class="dropdown-item">📊 Brand Dashboard</a>
+                                <a asp-controller="Campaigns" asp-action="Index" class="dropdown-item">📁 My Campaigns</a>
+                                <a asp-controller="Escrow" asp-action="Index" class="dropdown-item">🛡️ Escrow Deposits</a>
+                                <a asp-controller="Client" asp-action="Settings" class="dropdown-item">⚙️ Brand Settings</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Dashboard" asp-action="Index" class="dropdown-item">📊 Dashboard</a>
+                                <a asp-controller="Account" asp-action="Settings" class="dropdown-item">⚙️ Account Settings</a>
+                            }
+
+                            <div class="dropdown-divider"></div>
+
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="dropdown-item logout-link">🚪 Sign Out</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn-portal btn-ghost">Log In</a>
+                    <a asp-controller="Account" asp-action="SignUp" class="btn-portal btn-mint">Sign Up Free</a>
+                }
+            </div>
+        </div>
+    </header>
+
+    @if (TempData["StatusMessage"] != null)
+{
+    <div class="container">
+        <div class="status-toast" id="statusToast" role="alert">
+            <span class="status-icon">✓</span>
+            <span>@TempData["StatusMessage"]</span>
+            <button type="button" class="close-toast" onclick="document.getElementById('statusToast').remove()">×</button>
+        </div>
+    </div>
+}
+
+    @RenderBody()
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-inner">
+            <div class="logo-box">
+                <div class="logo-symbol logo-symbol-sm">
+                    <svg viewBox="0 0 100 100" fill="none" style="width:100%; height:100%;">
+                        <path d="M 68 18 A 38 38 0 1 0 68 82" stroke="#3344ff" stroke-width="14" stroke-linecap="round" />
+                        <line x1="50" y1="36" x2="82" y2="36" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                        <line x1="50" y1="50" x2="82" y2="50" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                        <line x1="50" y1="64" x2="82" y2="64" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <span class="logo-name" style="font-size:1.15rem;">CRE<span>E</span>OT</span>
+            </div>
+
+            <div class="footer-legal">
+                <p class="footer-copy">© @DateTime.Now.Year CREEOT Escrow Platform. All rights reserved.</p>
+                <span style="color:var(--card-border);">•</span>
+                <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+                <span style="color:var(--card-border);">•</span>
+                <a asp-controller="Home" asp-action="EscrowSecurity">Security & Compliance</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

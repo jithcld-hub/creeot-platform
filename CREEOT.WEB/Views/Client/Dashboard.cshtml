@@ -1,0 +1,325 @@
+﻿@model CREEOT.WEB.Models.BrandDashboardViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = $"{Model.BrandName} — Brand Command Dashboard";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-dashboard.css" asp-append-version="true" />
+    <style>
+        .brand-dash-wrapper {
+            padding: 120px 0 80px;
+        }
+
+        .action-banner {
+            background: linear-gradient(135deg, rgba(51, 68, 255, 0.15), rgba(0, 229, 163, 0.12));
+            border: 1px solid rgba(0, 229, 163, 0.35);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .action-banner-text strong {
+            display: block;
+            color: var(--mint);
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        .action-banner-text p {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin: 0;
+        }
+
+        .progress-bar-bg {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-bar-fill {
+            background: var(--mint);
+            height: 100%;
+            border-radius: 999px;
+            box-shadow: 0 0 10px var(--mint-glow);
+        }
+
+        .quick-link-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: #7d96ff;
+            text-decoration: underline;
+        }
+
+        .quick-link-pill:hover {
+            color: var(--mint);
+        }
+    </style>
+}
+
+<div class="container brand-dash-wrapper">
+    <!-- Header Greeting Card -->
+    <div class="dash-welcome-card">
+        <div>
+            <span class="badge-role">Brand Portal</span>
+            <h1 class="welcome-heading">@Model.BrandName</h1>
+            <p class="welcome-subtext">Welcome back, @Model.ContactPerson. Real-time overview of active creator deliverables and escrow protection.</p>
+        </div>
+        <div class="dash-quick-actions">
+            <a asp-controller="Campaigns" asp-action="Create" class="btn-dash btn-dash-primary">+ Launch Campaign</a>
+            <a asp-controller="Explore" asp-action="Index" class="btn-dash btn-dash-secondary">Find Talent</a>
+        </div>
+    </div>
+
+    <!-- Urgent Action Banner if deliverables are ready for review -->
+    @if (Model.PendingReviewMilestones.Any())
+    {
+        <div class="action-banner">
+            <div class="action-banner-text">
+                <strong>⚡ Deliverables Ready for Review (@Model.PendingReviewMilestones.Count)</strong>
+                <p>Creators have submitted draft links or published live post URLs that require your sign-off.</p>
+            </div>
+            <a href="#pending-reviews" class="btn-portal btn-mint btn-sm" style="flex-shrink: 0;">
+                Review Submissions →
+            </a>
+        </div>
+    }
+
+    <!-- 4 High-Level Metrics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Active Campaigns</span>
+                <span style="font-size: 1.2rem;">📁</span>
+            </div>
+            <div class="stat-value">@Model.ActiveCampaignsCount</div>
+            <div class="stat-note">Out of @Model.TotalCampaignsCount total campaigns launched.</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Funds Locked in Vault</span>
+                <span style="font-size: 1.2rem;">🔒</span>
+            </div>
+            <div class="stat-value text-mint">₹@Model.TotalEscrowLocked.ToString("N0")</div>
+            <div class="stat-note">Protected capital held in regulated escrow accounts.</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Total Completed Payouts</span>
+                <span style="font-size: 1.2rem;">💸</span>
+            </div>
+            <div class="stat-value" style="color: #7d96ff;">₹@Model.TotalEscrowPaidOut.ToString("N0")</div>
+            <div class="stat-note">Successfully transferred upon milestone inspection.</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Pending Reviews</span>
+                <span style="font-size: 1.2rem;">⚖</span>
+            </div>
+            <div class="stat-value @(Model.PendingReviewMilestones.Any() ? "text-amber" : "")">
+                @Model.PendingReviewMilestones.Count
+            </div>
+            <div class="stat-note">Milestones awaiting your feedback or approval.</div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="dash-main-grid">
+        <!-- Left: Active Campaigns & Pending Action Items -->
+        <div>
+            <!-- Pending Inspection List (if any) -->
+            @if (Model.PendingReviewMilestones.Any())
+            {
+                <div class="dash-panel" id="pending-reviews" style="margin-bottom: 24px; border-color: rgba(245, 158, 11, 0.4);">
+                    <div class="panel-header">
+                        <h3>Submissions Requiring Approval</h3>
+                        <span class="panel-sub">Approve live posts to release funds or request edits</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="creeot-table">
+                            <thead>
+                                <tr>
+                                    <th>Milestone / Campaign</th>
+                                    <th>Deliverable Link</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var m in Model.PendingReviewMilestones)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="collab-name">@m.MilestoneTitle</div>
+                                            <div class="collab-brand">@m.CampaignTitle</div>
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(m.LivePostUrl))
+                                            {
+                                                <a href="@m.LivePostUrl" target="_blank" rel="noopener noreferrer" class="quick-link-pill">
+                                                    🔗 Live Post URL
+                                                </a>
+                                            }
+                                            else if (!string.IsNullOrEmpty(m.SubmissionDraftUrl))
+                                            {
+                                                <a href="@m.SubmissionDraftUrl" target="_blank" rel="noopener noreferrer" class="quick-link-pill">
+                                                    📁 Draft Preview
+                                                </a>
+                                            }
+                                        </td>
+                                        <td><strong class="text-mint">@m.Amount.ToString("N0") @m.Currency</strong></td>
+                                        <td>
+                                            <a asp-controller="Campaigns" asp-action="Details" asp-route-id="@m.CampaignId" class="btn-table-action">
+                                                Review &amp; Release →
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- Recent Campaigns Table -->
+            <div class="dash-panel">
+                <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3>Recent Campaigns</h3>
+                        <span class="panel-sub">Track active deliverables and progress</span>
+                    </div>
+                    <a asp-controller="Campaigns" asp-action="Index" class="btn-table-action">View All Campaigns</a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="creeot-table">
+                        <thead>
+                            <tr>
+                                <th>Campaign</th>
+                                <th>Platform</th>
+                                <th>Escrow Budget</th>
+                                <th>Milestones</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentCampaigns.Any())
+                            {
+                                foreach (var c in Model.RecentCampaigns)
+                                {
+                                    var percent = c.TotalMilestones > 0 ? (int)((double)c.CompletedMilestones / c.TotalMilestones * 100) : 0;
+                                    <tr>
+                                        <td>
+                                            <a asp-controller="Campaigns" asp-action="Details" asp-route-id="@c.CampaignId" class="collab-name" style="text-decoration:underline;">
+                                                @c.Title
+                                            </a>
+                                            <div class="collab-brand">Due @c.DeadlineDate.ToString("MMM dd, yyyy")</div>
+                                        </td>
+                                        <td><span class="stage-tag">@c.Platform.ToUpper()</span></td>
+                                        <td><strong>@c.TotalBudget.ToString("N0") @c.Currency</strong></td>
+                                        <td style="min-width: 120px;">
+                                            <span style="font-size:0.75rem; color:var(--text-sub);">@c.CompletedMilestones of @c.TotalMilestones completed</span>
+                                            <div class="progress-bar-bg">
+                                                <div class="progress-bar-fill" style="width: @percent%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if (c.Status == CREEOT.WEB.Models.CampaignStatus.Active)
+                                            {
+                                                <span class="badge-escrow">Active</span>
+                                            }
+                                            else if (c.Status == CREEOT.WEB.Models.CampaignStatus.PendingEscrowDeposit)
+                                            {
+                                                <a asp-controller="Escrow" asp-action="Deposit" asp-route-campaignId="@c.CampaignId" class="badge-escrow" style="color:#f59e0b; background:rgba(245, 158, 11, 0.1);">
+                                                    Fund Vault
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="stage-tag">@c.Status</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 36px; color: var(--text-sub);">
+                                        No campaigns created yet. Click "+ Launch Campaign" above to get started.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Recent Escrow Activity Feed & Quick Actions -->
+        <div>
+            <!-- Escrow Ledger Panel -->
+            <div class="dash-panel" style="margin-bottom: 24px;">
+                <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3>Recent Vault Holds</h3>
+                        <span class="panel-sub">Escrow activity ledger</span>
+                    </div>
+                    <a asp-controller="Escrow" asp-action="Index" class="quick-link-pill">All Deposits →</a>
+                </div>
+
+                <div class="timeline-list">
+                    @if (Model.RecentTransactions.Any())
+                    {
+                        foreach (var tx in Model.RecentTransactions)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-dot" style="@(tx.Status == CREEOT.WEB.Models.TransactionStatus.ReleasedToCreator ? "background:#7d96ff;" : "background:var(--mint);")"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">@tx.CampaignTitle</div>
+                                    <div class="timeline-meta">@tx.ReferenceDetail • @tx.CreatedAt.ToString("MMM dd")</div>
+                                </div>
+                                <div class="timeline-amount text-mint">
+                                    @tx.Amount.ToString("N0") @tx.Currency
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p style="color:var(--text-sub); font-size:0.85rem; padding: 12px 0;">
+                            No deposit transactions recorded yet.
+                        </p>
+                    }
+                </div>
+            </div>
+
+            <!-- Quick Platform Guide -->
+            <div class="dash-panel" style="background: rgba(14, 23, 50, 0.4);">
+                <div class="panel-header">
+                    <h3>Escrow Security Shield</h3>
+                    <span class="panel-sub">Bank-grade transaction rules</span>
+                </div>
+                <ul class="policy-bullets" style="margin: 0; font-size: 0.85rem;">
+                    <li><strong>No Pre-Payment Losses:</strong> Creators film only once capital is pre-deposited in the vault.</li>
+                    <li><strong>Inspection Windows:</strong> You retain 48 hours to review draft deliverables before release.</li>
+                    <li><strong>Direct Dispute Mediation:</strong> CREEOT arbitrates scope disagreements impartially.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

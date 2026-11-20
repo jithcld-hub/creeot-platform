@@ -1,0 +1,76 @@
+﻿@model CREEOT.WEB.Models.CampaignListViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "Campaigns Overview — CREEOT";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-dashboard.css" asp-append-version="true" />
+}
+
+<div class="container dashboard-wrapper" style="padding-top: 120px;">
+    <div class="dash-welcome-card">
+        <div>
+            <span class="badge-role">Escrow Campaigns</span>
+            <h1 class="welcome-heading">Milestone Tracking</h1>
+            <p class="welcome-subtext">Manage digital contracts, milestone releases, and deliverable approvals.</p>
+        </div>
+        @if (User.IsInRole("Client"))
+        {
+            <div class="dash-quick-actions">
+                <a asp-action="Create" class="btn-dash btn-dash-primary">+ New Campaign</a>
+            </div>
+        }
+    </div>
+
+    <div class="dash-panel" style="margin-bottom: 30px;">
+        <div class="panel-header">
+            <h3>Active Deliverables</h3>
+            <span class="panel-sub">Campaigns currently running or pending funding</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="creeot-table">
+                <thead>
+                    <tr>
+                        <th>Campaign Title</th>
+                        <th>Target Platform</th>
+                        <th>Escrow Total</th>
+                        <th>Status</th>
+                        <th>Deadline</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ActiveCampaigns.Any())
+                    {
+                        foreach (var item in Model.ActiveCampaigns)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="collab-name">@item.Title</div>
+                                    <div class="collab-brand">Created @item.CreatedAt.ToString("MMM dd, yyyy")</div>
+                                </td>
+                                <td><span class="stage-tag">@item.Platform.ToUpper()</span></td>
+                                <td><strong class="text-mint">@item.TotalBudget.ToString("N0") @item.Currency</strong></td>
+                                <td><span class="badge-escrow">@item.Status</span></td>
+                                <td>@item.DeadlineDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.CampaignId" class="btn-table-action">View Milestones →</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" style="text-align:center; padding: 40px; color: var(--text-sub);">
+                                No active campaigns right now.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,349 @@
+﻿@model CREEOT.WEB.Models.CreatorWalletViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "Escrow Wallet & Payout Withdrawals — CREEOT";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/creeot-auth.css" asp-append-version="true" />
+    <style>
+        .wallet-wrapper {
+            padding: 120px 0 80px;
+        }
+
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .balance-hero-card {
+            background: linear-gradient(135deg, rgba(16, 26, 53, 0.9) 0%, rgba(10, 16, 36, 0.95) 100%);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .balance-hero-card::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, var(--mint-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .balance-title {
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 700;
+        }
+
+        .balance-amount-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin: 8px 0 20px;
+        }
+
+        .balance-amount-row .amount {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--mint);
+            letter-spacing: -0.02em;
+        }
+
+        .balance-amount-row .currency {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .wallet-stats-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .mini-stat h5 {
+            font-size: 0.76rem;
+            color: var(--text-sub);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .mini-stat p {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .destination-selector-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .destination-card {
+            background: rgba(7, 11, 25, 0.7);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .destination-card.active {
+            border-color: var(--mint);
+            background: rgba(0, 229, 163, 0.08);
+            box-shadow: 0 0 15px var(--mint-glow);
+        }
+
+        .destination-card input {
+            display: none;
+        }
+
+        .destination-card strong {
+            display: block;
+            font-size: 0.92rem;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .destination-card p {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            margin: 0;
+            word-break: break-all;
+        }
+
+        .alert-missing-payout {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #fde68a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        @@media (max-width: 992px) {
+            .wallet-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<div class="container wallet-wrapper">
+    <!-- Header Welcome Card -->
+    <div class="dash-welcome-card">
+        <div>
+            <span class="badge-role" style="background: rgba(0, 229, 163, 0.12); color: var(--mint);">Escrow Custody Wallet</span>
+            <h1 class="welcome-heading">Earnings &amp; Payouts</h1>
+            <p class="welcome-subtext">Withdraw cleared milestone compensations directly to your domestic bank or UPI VPA.</p>
+        </div>
+        <div class="dash-quick-actions">
+            <a asp-controller="Creator" asp-action="Settings" class="btn-dash btn-dash-secondary">⚙️ Payout Accounts</a>
+            <a asp-controller="Creator" asp-action="Dashboard" class="btn-dash btn-dash-primary">🎬 Studio Dashboard</a>
+        </div>
+    </div>
+
+    <div class="wallet-grid">
+        <!-- Left: Withdrawal Form & Destination Accounts -->
+        <div>
+            <!-- Balance Card -->
+            <div class="balance-hero-card">
+                <span class="balance-title">Available for Immediate Withdrawal</span>
+                <div class="balance-amount-row">
+                    <span class="amount">₹@Model.ClearedBalance.ToString("N0")</span>
+                    <span class="currency">@Model.Currency</span>
+                </div>
+
+                <div class="wallet-stats-mini">
+                    <div class="mini-stat">
+                        <h5>Pending in Escrow (Locked)</h5>
+                        <p style="color: #7d96ff;">₹@Model.PendingEscrowBalance.ToString("N0")</p>
+                    </div>
+                    <div class="mini-stat">
+                        <h5>Total Lifetime Withdrawn</h5>
+                        <p style="color: #cbd5e1;">₹@Model.TotalLifetimeWithdrawn.ToString("N0")</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Missing Account Warning -->
+            @if (!Model.HasConfiguredPayoutMethod)
+            {
+                <div class="alert-missing-payout">
+                    <div>
+                        <strong>No payout destination found</strong>
+                        <p style="margin:2px 0 0 0; color:#cbd5e1;">Please add your Bank Account or UPI ID to enable fund transfers.</p>
+                    </div>
+                    <a asp-action="Settings" asp-controller="Creator" class="btn-portal btn-ghost btn-sm" style="flex-shrink:0;">
+                        Add Account →
+                    </a>
+                </div>
+            }
+
+            <!-- Withdrawal Card Form -->
+            <div class="auth-card" style="box-shadow: none; margin-bottom: 28px;">
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 4px;">Initiate Bank Withdrawal</h3>
+                <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 20px;">
+                    Withdrawals process 24x7 via automated IMPS / UPI transfer nodes.
+                </p>
+
+                <form asp-action="Withdraw" asp-controller="Creator" method="post" id="withdrawForm" novalidate>
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                    <!-- Payout Destination Cards -->
+                    <label class="form-label">Select Payout Destination</label>
+                    <div class="destination-selector-grid">
+                        <label class="destination-card @(Model.SelectedDestination == "UPI" ? "active" : "")" id="dest-upi">
+                            <input type="radio" asp-for="SelectedDestination" value="UPI" checked />
+                            <strong>⚡ Instant UPI</strong>
+                            <p>@(string.IsNullOrWhiteSpace(Model.PayoutUpiId) ? "Not configured" : Model.PayoutUpiId)</p>
+                        </label>
+
+                        <label class="destination-card @(Model.SelectedDestination == "Bank" ? "active" : "")" id="dest-bank">
+                            <input type="radio" asp-for="SelectedDestination" value="Bank" />
+                            <strong>🏦 Bank Account</strong>
+                            <p>@(string.IsNullOrWhiteSpace(Model.BankAccountNumber) ? "Not configured" : $"A/C •••• {Model.BankAccountNumber[^Math.Min(4, Model.BankAccountNumber.Length)..]}")</p>
+                        </label>
+                    </div>
+                    <span asp-validation-for="SelectedDestination" class="text-danger" style="margin-top:-14px; margin-bottom:14px;"></span>
+
+                    <!-- Amount Field -->
+                    <div class="form-group">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <label asp-for="WithdrawAmount" class="form-label" style="margin-bottom:0;"></label>
+                            <a href="javascript:void(0)" onclick="setFullAmount()" style="font-size:0.75rem; color:var(--mint); font-weight:700;">
+                                Max (₹@Model.ClearedBalance.ToString("N0"))
+                            </a>
+                        </div>
+                        <input asp-for="WithdrawAmount" id="withdrawAmountInput" type="number" step="100" class="form-control" />
+                        <span asp-validation-for="WithdrawAmount" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn-auth-submit" @(Model.ClearedBalance < 500 || !Model.HasConfiguredPayoutMethod ? "disabled style=opacity:0.4;cursor:not-allowed;" : "")>
+                        Withdraw ₹@Model.ClearedBalance.ToString("N0") Now →
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right: Recent Payout Ledger & Cleared Deliverables -->
+        <div>
+            <!-- Payout History -->
+            <div class="dash-panel" style="margin-bottom: 24px;">
+                <div class="panel-header">
+                    <h3>Withdrawal History</h3>
+                    <span class="panel-sub">Disbursements to your account</span>
+                </div>
+
+                @if (Model.PayoutHistory.Any())
+                {
+                    <div class="timeline-list">
+                        @foreach (var p in Model.PayoutHistory)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">₹@p.Amount.ToString("N0") @p.Currency</div>
+                                    <div class="timeline-meta">@p.DestinationDetail • @p.RequestedAt.ToString("MMM dd, yyyy")</div>
+                                </div>
+                                <span class="badge-escrow">@p.Status</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p style="color:var(--text-sub); font-size:0.85rem; padding: 12px 0;">
+                        No withdrawals requested yet.
+                    </p>
+                }
+            </div>
+
+            <!-- Cleared Deliverables Breakdown -->
+            <div class="dash-panel">
+                <div class="panel-header">
+                    <h3>Cleared Milestones</h3>
+                    <span class="panel-sub">Deliverables signed off by brands</span>
+                </div>
+
+                @if (Model.ClearedDeliverables.Any())
+                {
+                    <div class="timeline-list">
+                        @foreach (var m in Model.ClearedDeliverables)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-dot" style="background:#7d96ff;"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">@m.MilestoneTitle</div>
+                                    <div class="timeline-meta">@m.CampaignTitle</div>
+                                </div>
+                                <div class="timeline-amount text-mint">
+                                    +₹@m.Amount.ToString("N0")
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p style="color:var(--text-sub); font-size:0.85rem; padding: 12px 0;">
+                        No completed milestone releases yet.
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const upiCard = document.getElementById('dest-upi');
+            const bankCard = document.getElementById('dest-bank');
+
+            upiCard?.addEventListener('click', () => {
+                upiCard.classList.add('active');
+                bankCard.classList.remove('active');
+            });
+
+            bankCard?.addEventListener('click', () => {
+                bankCard.classList.add('active');
+                upiCard.classList.remove('active');
+            });
+        });
+
+        function setFullAmount() {
+            const input = document.getElementById('withdrawAmountInput');
+            if (input) {
+                input.value = @Model.ClearedBalance;
+            }
+        }
+    </script>
+}

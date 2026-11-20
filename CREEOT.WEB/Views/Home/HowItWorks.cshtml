@@ -1,0 +1,223 @@
+﻿@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "CREEOT — How It Works (Step-by-Step Escrow Workflow)";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-pages.css" asp-append-version="true" />
+}
+
+<main class="security-page">
+    <!-- Hero Banner -->
+    <section class="security-hero">
+        <div class="container">
+            <div class="badge-verified">
+                <span class="pulse-dot"></span> The Transparent Collab Framework
+            </div>
+            <h1 class="hero-title">
+                How Influencer Marketing Works With Guaranteed Escrow Safety.<br />
+                @* <span class="gradient-headline">With Guaranteed Escrow Safety.</span> *@
+            </h1>
+            <p class="hero-desc">
+                From agreement to verified publication, CREEOT locks capital in ring-fenced vaults so brands only pay for approved content and creators work with&nbsp;guaranteed&nbsp;pay.
+            </p>
+            <br />
+            <div class="hero-cta-group">
+                <a asp-controller="Account" asp-action="SignUp" asp-route-role="Client" class="btn-portal btn-mint">
+                    Launch as Brand →
+                </a>
+                <a asp-controller="Account" asp-action="SignUp" asp-route-role="Influencer" class="btn-portal btn-ghost">
+                    Join as Creator
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Two Workflows: Brand Perspective vs Creator Perspective -->
+    <section class="container dual-benefits-section">
+        <div class="section-header" style="text-align: center; max-width: 600px; margin: 0 auto 50px;">
+            <h2 style="font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px;">Two Perspectives, One System</h2>
+            <p style="color: var(--text-sub); font-size: 1rem;">Choose how you want to experience the platform.</p>
+        </div>
+
+        <div class="benefits-grid">
+            <!-- Brand Journey -->
+            <div class="benefit-panel brand-panel">
+                <div class="panel-header">
+                    <span class="badge-verified" style="padding: 4px 12px; margin-bottom: 12px;">For Brands &amp; Businesses</span>
+                    <h3>The Brand Journey</h3>
+                </div>
+                <ul class="benefit-list">
+                    <li>
+                        <span class="check-icon">1</span>
+                        <div>
+                            <strong>Discover &amp; Handpick Verified Talent</strong>
+                            <p>Filter creators by niche, average views, country, and price bracket with audited audience telemetry.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon">2</span>
+                        <div>
+                            <strong>Define Deliverables &amp; Fund Escrow</strong>
+                            <p>Set project milestones (e.g., 1x Reel + 2x Stories). Deposit funds safely into CREEOT's holding vault.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon">3</span>
+                        <div>
+                            <strong>Review Drafts &amp; Live Publication</strong>
+                            <p>Inspect content drafts, request adjustments, and verify the post link after going live.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon">4</span>
+                        <div>
+                            <strong>Approve &amp; Release Payment</strong>
+                            <p>Once deliverables meet criteria, one click releases milestone funds to the creator's wallet.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Creator Journey -->
+            <div class="benefit-panel creator-panel">
+                <div class="panel-header">
+                    <span class="badge-verified" style="padding: 4px 12px; margin-bottom: 12px; color: #7d96ff; border-color: rgba(125, 150, 255, 0.3); background: rgba(125, 150, 255, 0.1);">For Creators &amp; Influencers</span>
+                    <h3>The Creator Journey</h3>
+                </div>
+                <ul class="benefit-list">
+                    <li>
+                        <span class="check-icon" style="color: #7d96ff;">1</span>
+                        <div>
+                            <strong>Receive Verified Briefs</strong>
+                            <p>Get assignment requests with clear requirements, deadlines, and committed payout amounts.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon" style="color: #7d96ff;">2</span>
+                        <div>
+                            <strong>Create With Upfront Confidence</strong>
+                            <p>Never film on credit. You receive an instant alert once the brand locks 100% of the funds in escrow.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon" style="color: #7d96ff;">3</span>
+                        <div>
+                            <strong>Upload Proof &amp; Live Post Links</strong>
+                            <p>Submit drafts for feedback, publish to your channels, and share live post telemetry directly in-app.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon" style="color: #7d96ff;">4</span>
+                        <div>
+                            <strong>Fast Multi-Currency Payouts</strong>
+                            <p>Funds clear instantly to your CREEOT Wallet for direct withdrawal in INR, AED, or QAR.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed 4-Step Technical Pipeline -->
+    <section class="container">
+        <div class="escrow-process-box">
+            <div class="section-header" style="text-align: center; max-width: 600px; margin: 0 auto 50px;">
+                <h2 style="font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px;">Milestone Execution Stages</h2>
+                <p style="color: var(--text-sub); font-size: 1rem;">How CREEOT guarantees zero financial exposure on every collaboration.</p>
+            </div>
+
+            <div class="timeline-stepper">
+                <!-- Step 1 -->
+                <div class="stepper-node">
+                    <div class="node-marker">
+                        <span class="marker-num">01</span>
+                    </div>
+                    <div class="node-content">
+                        <h4>Digital SOW Scope</h4>
+                        <p>Brand and creator formulate timeline, revisions, content formats, and platform requirements inside a digital statement of work.</p>
+                        <span class="node-tag">Contract Agreement</span>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="stepper-node">
+                    <div class="node-marker active">
+                        <span class="marker-num">02</span>
+                    </div>
+                    <div class="node-content">
+                        <h4>Capital Vault Lock</h4>
+                        <p>The campaign budget is locked into regulated escrow. Neither party can unilaterally withdraw funds during production.</p>
+                        <span class="node-tag active">Funds Held in Escrow</span>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="stepper-node">
+                    <div class="node-marker">
+                        <span class="marker-num">03</span>
+                    </div>
+                    <div class="node-content">
+                        <h4>Draft &amp; Quality Review</h4>
+                        <p>Draft media is uploaded to the dashboard. The client reviews the submission within a designated 48-hour inspection window.</p>
+                        <span class="node-tag">Deliverable Audit</span>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="stepper-node">
+                    <div class="node-marker">
+                        <span class="marker-num">04</span>
+                    </div>
+                    <div class="node-content">
+                        <h4>Live Release &amp; Payout</h4>
+                        <p>Live post links and performance metrics trigger deliverable sign-off, instantly moving funds into the creator's wallet.</p>
+                        <span class="node-tag">Instant Settlement</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety Pillars Grid -->
+    <section class="container pillars-section">
+        <div class="pillars-grid">
+            <div class="pillar-card">
+                <div class="pillar-icon">&#128737;</div>
+                <h3>No Advance Ghosting</h3>
+                <p>Creators don't get paid upfront without deliverables, preventing non-delivery and budget losses for brands.</p>
+                <div class="pillar-meta">Brand Capital Protection</div>
+            </div>
+
+            <div class="pillar-card highlight-card">
+                <div class="pillar-icon" style="color: var(--mint);">&#128176;</div>
+                <h3>No Late Payment Terms</h3>
+                <p>Say goodbye to Net-60 delays. Compensation is locked before you shoot and credited immediately after approval.</p>
+                <div class="pillar-meta" style="color: var(--mint);">Creator Payment Security</div>
+            </div>
+
+            <div class="pillar-card">
+                <div class="pillar-icon">&#9878;</div>
+                <h3>Arbitration Desk</h3>
+                <p>If either party fails to meet contractual criteria, CREEOT mediators step in with evidence-based dispute resolution.</p>
+                <div class="pillar-meta">Neutral Platform Support</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Action Card -->
+    <section class="container" style="padding-bottom: 100px;">
+        <div class="security-cta-banner">
+            <h2>Ready to Run Transparent Collaborations?</h2>
+            <p>Start hiring vetted creators or monetizing your influence with bank-grade escrow protection.</p>
+            <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:24px;">
+                <a asp-controller="Explore" asp-action="Index" class="btn-portal btn-mint">
+                    Browse Creators
+                </a>
+                <a asp-controller="Account" asp-action="SignUp" class="btn-portal btn-ghost">
+                    Sign Up Free
+                </a>
+            </div>
+        </div>
+    </section>
+</main>

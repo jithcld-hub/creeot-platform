@@ -1,0 +1,65 @@
+﻿@model CREEOT.WEB.Models.Campaign
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = $"{Model.Title} — Campaign Escrow Details";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/creeot-pages.css" asp-append-version="true" />
+}
+
+<div class="container dashboard-wrapper" style="padding-top: 120px;">
+    <div class="dash-welcome-card">
+        <div>
+            <span class="badge-role">Campaign #@Model.CampaignId</span>
+            <h1 class="welcome-heading">@Model.Title</h1>
+            <p class="welcome-subtext">Budget: <strong class="text-mint">@Model.TotalBudget.ToString("N0") @Model.Currency</strong> • Platform: <strong>@Model.Platform</strong></p>
+        </div>
+        <div class="dash-quick-actions">
+            @if (Model.Status == CREEOT.WEB.Models.CampaignStatus.PendingEscrowDeposit && User.IsInRole("Client"))
+            {
+                <a asp-controller="Escrow" asp-action="Deposit" asp-route-campaignId="@Model.CampaignId" class="btn-dash btn-dash-primary">
+                    Deposit Escrow Funds
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="dash-main-grid">
+        <!-- Milestone Tracker -->
+        <div class="dash-panel">
+            <div class="panel-header">
+                <h3>Milestone Checklist</h3>
+                <span class="panel-sub">Funds release automatically upon client approval of submissions</span>
+            </div>
+
+            <div class="timeline-list">
+                @foreach (var milestone in Model.Milestones)
+                {
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="@(milestone.Status == CREEOT.WEB.Models.MilestoneStatus.ApprovedAndReleased ? "background:var(--mint);" : "background:#7d96ff;")"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">@milestone.MilestoneTitle</div>
+                            <div class="timeline-meta">Status: <strong>@milestone.Status</strong></div>
+                        </div>
+                        <div class="timeline-amount text-mint">
+                            @milestone.Amount.ToString("N0") @Model.Currency
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Campaign Brief / Scope -->
+        <div class="dash-panel">
+            <div class="panel-header">
+                <h3>Brief Guidelines</h3>
+                <span class="panel-sub">Agreed Scope of Work</span>
+            </div>
+            <p style="color: var(--text-sub); line-height: 1.6; font-size: 0.9rem;">
+                @Model.Description
+            </p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,314 @@
+﻿@model CREEOT.WEB.Models.CreatorSettingsViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "Creator Studio & Payout Settings — CREEOT";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/creeot-auth.css" asp-append-version="true" />
+    <style>
+        .settings-wrapper {
+            padding: 120px 0 80px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .settings-nav {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 16px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: sticky;
+            top: 110px;
+        }
+
+        .settings-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .settings-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .settings-nav-btn.active {
+            background: rgba(0, 229, 163, 0.12);
+            color: var(--mint);
+            border: 1px solid rgba(0, 229, 163, 0.3);
+        }
+
+        .settings-section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(25px);
+        }
+
+        .settings-header-box {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .settings-header-box h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .settings-header-box p {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin: 0;
+        }
+
+        @@media (max-width: 992px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            .settings-nav {
+                position: relative;
+                top: 0;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+        }
+    </style>
+}
+
+<div class="container settings-wrapper">
+    <!-- Header Welcome Card -->
+    <div class="dash-welcome-card" style="margin-bottom: 30px;">
+        <div>
+            <span class="badge-role" style="background: rgba(51, 68, 255, 0.15); color: #7d96ff;">Creator Configuration</span>
+            <h1 class="welcome-heading">Studio &amp; Payout Settings</h1>
+            <p class="welcome-subtext">Manage public discovery profiles, baseline rates, and bank accounts for automated escrow payouts.</p>
+        </div>
+        <div class="dash-quick-actions">
+            <a asp-controller="Creator" asp-action="Earnings" class="btn-dash btn-dash-primary">💰 Escrow Wallet</a>
+        </div>
+    </div>
+
+    <form asp-action="Settings" asp-controller="Creator" method="post" id="creatorSettingsForm" novalidate>
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        <div class="settings-grid">
+            <!-- Left-rail Jump Navigation -->
+            <aside class="settings-nav">
+                <button type="button" class="settings-nav-btn active" onclick="scrollToSection('sec-profile')">
+                    🎬 Channel &amp; Rates
+                </button>
+                <button type="button" class="settings-nav-btn" onclick="scrollToSection('sec-identity')">
+                    👤 Personal Identity
+                </button>
+                <button type="button" class="settings-nav-btn" onclick="scrollToSection('sec-payouts')">
+                    🏦 Escrow Payouts
+                </button>
+                <button type="button" class="settings-nav-btn" onclick="scrollToSection('sec-security')">
+                    🔒 Account Password
+                </button>
+            </aside>
+
+            <!-- Right-rail Main Form Panels -->
+            <div class="settings-content">
+                <!-- 1. Channel Profile & Rates -->
+                <div class="settings-section-card" id="sec-profile">
+                    <div class="settings-header-box">
+                        <h3>Marketplace Profile &amp; Pricing</h3>
+                        <p>How brands discover you on the Explore roster and pricing tiers.</p>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="Handle" class="form-label"></label>
+                            <input asp-for="Handle" class="form-control" placeholder="e.g. @@rahul_vlogs" />
+                            <span asp-validation-for="Handle" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="BasePrice" class="form-label">Starting Deliverable Rate</label>
+                            <input asp-for="BasePrice" type="number" step="100" class="form-control" />
+                            <span asp-validation-for="BasePrice" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="PrimaryPlatform" class="form-label"></label>
+                            <select asp-for="PrimaryPlatform" class="form-control">
+                                <option value="instagram">Instagram</option>
+                                <option value="youtube">YouTube</option>
+                                <option value="tiktok">TikTok</option>
+                            </select>
+                            <span asp-validation-for="PrimaryPlatform" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PrimaryNiche" class="form-label"></label>
+                            <select asp-for="PrimaryNiche" class="form-control">
+                                <option value="lifestyle">Lifestyle &amp; Fashion</option>
+                                <option value="tech">Technology &amp; Gadgets</option>
+                                <option value="food">Food &amp; Dining</option>
+                                <option value="travel">Travel &amp; Tourism</option>
+                                <option value="fitness">Fitness &amp; Health</option>
+                            </select>
+                            <span asp-validation-for="PrimaryNiche" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Bio" class="form-label"></label>
+                        <textarea asp-for="Bio" rows="3" class="form-control" placeholder="Briefly describe your content formats, audience demographics, and creative specialties..."></textarea>
+                        <span asp-validation-for="Bio" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- 2. Personal Identity -->
+                <div class="settings-section-card" id="sec-identity">
+                    <div class="settings-header-box">
+                        <h3>Identity &amp; Legal Info</h3>
+                        <p>Used for campaign contract agreements and KYC compliance.</p>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CountryCode" class="form-label"></label>
+                            <select asp-for="CountryCode" class="form-control">
+                                <option value="IN">India (INR)</option>
+                                <option value="AE">UAE (AED)</option>
+                                <option value="QA">Qatar (QAR)</option>
+                            </select>
+                            <span asp-validation-for="CountryCode" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" readonly style="opacity: 0.65; cursor: not-allowed;" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PhoneNumber" class="form-label"></label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="+91 98765 43210" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Escrow Bank & Payouts -->
+                <div class="settings-section-card" id="sec-payouts">
+                    <div class="settings-header-box">
+                        <h3>Escrow Payout Settlement</h3>
+                        <p>Where your cleared campaign milestone funds are deposited.</p>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="BankAccountHolderName" class="form-label"></label>
+                            <input asp-for="BankAccountHolderName" class="form-control" placeholder="Name as per Bank Passbook" />
+                            <span asp-validation-for="BankAccountHolderName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PayoutUpiId" class="form-label"></label>
+                            <input asp-for="PayoutUpiId" class="form-control" placeholder="username@okhdfcbank" />
+                            <span asp-validation-for="PayoutUpiId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="BankAccountNumber" class="form-label"></label>
+                            <input asp-for="BankAccountNumber" class="form-control" placeholder="Account Number / IBAN" />
+                            <span asp-validation-for="BankAccountNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="BankIfscOrSwift" class="form-label"></label>
+                            <input asp-for="BankIfscOrSwift" class="form-control" placeholder="IFSC / SWIFT" />
+                            <span asp-validation-for="BankIfscOrSwift" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Security & Password -->
+                <div class="settings-section-card" id="sec-security">
+                    <div class="settings-header-box">
+                        <h3>Security Credentials</h3>
+                        <p>Leave blank if you do not want to change your password.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CurrentPassword" class="form-label"></label>
+                        <input asp-for="CurrentPassword" type="password" class="form-control" placeholder="Enter current password" autocomplete="current-password" />
+                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="NewPassword" class="form-label"></label>
+                            <input asp-for="NewPassword" type="password" class="form-control" placeholder="Min. 8 characters" autocomplete="new-password" />
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ConfirmNewPassword" class="form-label"></label>
+                            <input asp-for="ConfirmNewPassword" type="password" class="form-control" placeholder="Confirm new password" autocomplete="new-password" />
+                            <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div style="display:flex; justify-content: flex-end; gap: 14px; margin-top: 10px;">
+                    <a asp-action="Dashboard" asp-controller="Creator" class="btn-portal btn-ghost">Cancel</a>
+                    <button type="submit" class="btn-portal btn-mint" style="padding: 12px 28px;">
+                        Save Studio Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function scrollToSection(sectionId) {
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            document.querySelectorAll('.settings-nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+}

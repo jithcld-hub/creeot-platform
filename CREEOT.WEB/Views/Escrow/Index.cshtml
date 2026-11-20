@@ -1,0 +1,179 @@
+﻿@model CREEOT.WEB.Models.EscrowDashboardViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "Escrow Deposits & Capital Vault — CREEOT";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-dashboard.css" asp-append-version="true" />
+    <style>
+        .escrow-vault-container {
+            padding: 120px 0 80px;
+        }
+
+        .badge-status-locked {
+            background: rgba(0, 229, 163, 0.12);
+            color: var(--mint);
+            border: 1px solid rgba(0, 229, 163, 0.3);
+        }
+
+        .badge-status-released {
+            background: rgba(51, 68, 255, 0.15);
+            color: #7d96ff;
+            border: 1px solid rgba(51, 68, 255, 0.3);
+        }
+
+        .badge-status-refunded {
+            background: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .tx-ref {
+            font-size: 0.72rem;
+            color: var(--text-sub);
+            font-family: monospace;
+        }
+
+        .empty-escrow-box {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-sub);
+        }
+    </style>
+}
+
+<div class="container escrow-vault-container">
+    <!-- Top Greeting & Overview Card -->
+    <div class="dash-welcome-card">
+        <div>
+            <span class="badge-role">Capital Protection Vault</span>
+            <h1 class="welcome-heading">Escrow Deposits &amp; Holdings</h1>
+            <p class="welcome-subtext">Segregated audit ledger of locked campaign balances, live holds, and creator disbursements.</p>
+        </div>
+        <div class="dash-quick-actions">
+            <a asp-controller="Campaigns" asp-action="Create" class="btn-dash btn-dash-primary">+ New Campaign</a>
+            <a asp-controller="Home" asp-action="EscrowSecurity" class="btn-dash btn-dash-secondary">Security Protocol</a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Metric Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Currently Locked in Escrow</span>
+                <span style="font-size: 1.2rem;">🔒</span>
+            </div>
+            <div class="stat-value text-mint">₹@Model.TotalEscrowLocked.ToString("N0")</div>
+            <div class="stat-note">Protected in ring-fenced vault across @Model.ActiveCampaignsCount campaign(s).</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Released to Creators</span>
+                <span style="font-size: 1.2rem;">💸</span>
+            </div>
+            <div class="stat-value" style="color: #7d96ff;">₹@Model.TotalEscrowReleased.ToString("N0")</div>
+            <div class="stat-note">Successfully transferred upon milestone inspection approval.</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Refunded Balances</span>
+                <span style="font-size: 1.2rem;">↩️</span>
+            </div>
+            <div class="stat-value text-amber">₹@Model.TotalEscrowRefunded.ToString("N0")</div>
+            <div class="stat-note">Returned to your funding account due to cancelled milestones.</div>
+        </div>
+    </div>
+
+    <!-- Escrow Deposit Transactions Table -->
+    <div class="dash-panel">
+        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h3>Deposit &amp; Vault Ledger</h3>
+                <span class="panel-sub">Every transaction linked to your Brand account with real-time settlement status</span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="creeot-table">
+                <thead>
+                    <tr>
+                        <th>Date &amp; Transaction ID</th>
+                        <th>Associated Campaign</th>
+                        <th>Payment Channel</th>
+                        <th>Deposit Amount</th>
+                        <th>Vault Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Transactions.Any())
+                    {
+                        foreach (var item in Model.Transactions)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="collab-name">@item.CreatedAt.ToString("MMM dd, yyyy")</div>
+                                    <div class="tx-ref">@(item.GatewayPaymentId ?? $"TXN-{item.TransactionId:D6}")</div>
+                                </td>
+                                <td>
+                                    <a asp-controller="Campaigns" asp-action="Details" asp-route-id="@item.CampaignId" style="color: #ffffff; font-weight: 600; text-decoration: underline;">
+                                        @item.CampaignTitle
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="stage-tag">@item.ReferenceDetail</span>
+                                </td>
+                                <td>
+                                    <strong style="color: var(--text-main); font-size: 0.95rem;">
+                                        @item.Amount.ToString("N0") @item.Currency
+                                    </strong>
+                                </td>
+                                <td>
+                                    @switch (item.Status)
+                                    {
+                                        case CREEOT.WEB.Models.TransactionStatus.LockedInEscrow:
+                                            <span class="badge-escrow badge-status-locked">🔒 Locked in Vault</span>
+                                            break;
+                                        case CREEOT.WEB.Models.TransactionStatus.ReleasedToCreator:
+                                            <span class="badge-escrow badge-status-released">✓ Paid Out</span>
+                                            break;
+                                        case CREEOT.WEB.Models.TransactionStatus.Refunded:
+                                            <span class="badge-escrow badge-status-refunded">↩ Refunded</span>
+                                            break;
+                                        default:
+                                            <span class="stage-tag">@item.Status</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-controller="Campaigns" asp-action="Details" asp-route-id="@item.CampaignId" class="btn-table-action">
+                                        Milestones →
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-escrow-box">
+                                    <div style="font-size: 2.2rem; margin-bottom: 8px;">🛡️</div>
+                                    <h4 style="color: #ffffff; margin-bottom: 4px;">No Escrow Deposits Yet</h4>
+                                    <p style="font-size: 0.85rem; margin-bottom: 16px;">Once you launch a campaign and fund the escrow vault, your deposit history will appear here.</p>
+                                    <br />
+                                    <a asp-controller="Campaigns" asp-action="Create" class="btn-dash btn-dash-primary">
+                                        Launch First Campaign
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

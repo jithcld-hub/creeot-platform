@@ -1,0 +1,232 @@
+﻿@model CREEOT.WEB.Models.SignUpViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "Create Free Account — CREEOT Escrow Platform";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-auth.css" asp-append-version="true" />
+}
+
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <!-- Brand Header -->
+        <div class="auth-brand-header">
+            @* <a asp-controller="Home" asp-action="Index" class="auth-logo-symbol" title="CREEOT Home">
+                <svg viewBox="0 0 100 100" fill="none" style="width:100%; height:100%;">
+                    <path d="M 68 18 A 38 38 0 1 0 68 82" stroke="#3344ff" stroke-width="14" stroke-linecap="round" />
+                    <line x1="50" y1="36" x2="82" y2="36" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                    <line x1="50" y1="50" x2="82" y2="50" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                    <line x1="50" y1="64" x2="82" y2="64" stroke="#00e5a3" stroke-width="8" stroke-linecap="round" />
+                </svg>
+            </a> *@
+            @* <h1 class="auth-brand-title">CRE<span>E</span>OT</h1> *@
+            @* <p class="auth-brand-subtitle">Milestone-Protected Influencer Collaborations</p> *@
+            <br />
+            <br />
+        </div>
+
+        <!-- Registration Form Card -->
+        <div class="auth-card">
+            <form asp-controller="Account" asp-action="SignUp" method="post" id="signUpForm" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <!-- Role Selector Tabs -->
+                <div class="auth-role-switch">
+                    <label class="auth-role-option @(Model.Role == CREEOT.WEB.Models.UserRole.Client ? "active" : "")" id="opt-client">
+                        <input type="radio" asp-for="Role" value="@CREEOT.WEB.Models.UserRole.Client" id="role-client" />
+                        <span>🏢 Brand / Business</span>
+                    </label>
+                    <label class="auth-role-option @(Model.Role == CREEOT.WEB.Models.UserRole.Influencer ? "active" : "")" id="opt-influencer">
+                        <input type="radio" asp-for="Role" value="@CREEOT.WEB.Models.UserRole.Influencer" id="role-influencer" />
+                        <span>🎬 Influencer / Creator</span>
+                    </label>
+                </div>
+                <span asp-validation-for="Role" class="text-danger"></span>
+
+                <!-- Core Identity Fields -->
+                <div class="auth-two-cols">
+                    <div class="form-group">
+                        <label asp-for="FullName" class="form-label"></label>
+                        <input asp-for="FullName" class="form-control" placeholder="e.g. Rahul Sharma" autocomplete="name" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CountryCode" class="form-label"></label>
+                        <select asp-for="CountryCode" class="form-control">
+                            <option value="IN">India (INR)</option>
+                            <option value="AE">UAE (AED)</option>
+                            <option value="QA">Qatar (QAR)</option>
+                        </select>
+                        <span asp-validation-for="CountryCode" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="auth-two-cols">
+                    <div class="form-group">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" placeholder="name@domain.com" autocomplete="email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="+91 98765 43210" autocomplete="tel" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Brand / Business Fields Panel -->
+                <div id="clientFields" style="display: @(Model.Role == CREEOT.WEB.Models.UserRole.Client ? "block" : "none");">
+                    <div class="auth-section-divider">
+                        <span>Company & Billing Profile</span>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="CompanyName" class="form-label"></label>
+                            <input asp-for="CompanyName" class="form-control" placeholder="e.g. Apex Consumer Brands" />
+                            <span asp-validation-for="CompanyName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Industry" class="form-label"></label>
+                            <select asp-for="Industry" class="form-control">
+                                <option value="">Select Industry</option>
+                                <option value="E-Commerce">E-Commerce & Retail</option>
+                                <option value="Fashion & Beauty">Fashion & Apparel</option>
+                                <option value="Tech & Electronics">Technology & Software</option>
+                                <option value="FMCG & Food">Food & Beverages</option>
+                                <option value="Travel & Hospitality">Travel & Hospitality</option>
+                                <option value="Health & Fitness">Health & Fitness</option>
+                            </select>
+                            <span asp-validation-for="Industry" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="WebsiteUrl" class="form-label"></label>
+                            <input asp-for="WebsiteUrl" class="form-control" placeholder="https://company.com" />
+                            <span asp-validation-for="WebsiteUrl" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TaxOrVatNumber" class="form-label"></label>
+                            <input asp-for="TaxOrVatNumber" class="form-control" placeholder="GSTIN / TRN number" />
+                            <span asp-validation-for="TaxOrVatNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Influencer / Creator Fields Panel -->
+                <div id="influencerFields" style="display: @(Model.Role == CREEOT.WEB.Models.UserRole.Influencer ? "block" : "none");">
+                    <div class="auth-section-divider">
+                        <span>Creator Profile & Channels</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Handle" class="form-label"></label>
+                        <input asp-for="Handle" class="form-control" placeholder="e.g. @@rahul_vlogs" />
+                        <span asp-validation-for="Handle" class="text-danger"></span>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="PrimaryPlatform" class="form-label"></label>
+                            <select asp-for="PrimaryPlatform" class="form-control">
+                                <option value="">Select Platform</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="youtube">YouTube</option>
+                                <option value="tiktok">TikTok</option>
+                            </select>
+                            <span asp-validation-for="PrimaryPlatform" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PrimaryNiche" class="form-label"></label>
+                            <select asp-for="PrimaryNiche" class="form-control">
+                                <option value="">Select Primary Niche</option>
+                                <option value="lifestyle">Lifestyle & Fashion</option>
+                                <option value="tech">Technology & Gadgets</option>
+                                <option value="travel">Travel & Tourism</option>
+                                <option value="food">Food & Culinary</option>
+                                <option value="fitness">Fitness & Wellness</option>
+                            </select>
+                            <span asp-validation-for="PrimaryNiche" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Security -->
+                <div class="auth-section-divider">
+                    <span>Account Security</span>
+                </div>
+
+                <div class="auth-two-cols">
+                    <div class="form-group">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" placeholder="Min. 8 characters" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="form-label"></label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Escrow Agreement Checkbox -->
+                <div class="auth-check">
+                    <input type="checkbox" asp-for="AgreeToTerms" id="AgreeToTerms" />
+                    <label for="AgreeToTerms">
+                        I agree to the <a asp-controller="Home" asp-action="Privacy" target="_blank">Terms & Privacy Policy</a> and accept the <a asp-controller="Home" asp-action="EscrowSecurity" target="_blank">Escrow Milestone Protection</a> terms.
+                    </label>
+                </div>
+                <span asp-validation-for="AgreeToTerms" class="text-danger" style="margin-top:-14px; margin-bottom:18px;"></span>
+
+                <button type="submit" class="btn-auth-submit" id="submitBtn">
+                    @(Model.Role == CREEOT.WEB.Models.UserRole.Client ? "Register Brand Account" : "Register Creator Account")
+                </button>
+            </form>
+
+            <div class="auth-footer-text">
+                Already have an account? <a asp-action="Login" asp-controller="Account">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const clientOpt = document.getElementById('opt-client');
+            const influencerOpt = document.getElementById('opt-influencer');
+            const roleClientRadio = document.getElementById('role-client');
+            const roleInfluencerRadio = document.getElementById('role-influencer');
+            const clientFields = document.getElementById('clientFields');
+            const influencerFields = document.getElementById('influencerFields');
+            const submitBtn = document.getElementById('submitBtn');
+
+            function setRole(isClient) {
+                if (isClient) {
+                    clientOpt.classList.add('active');
+                    influencerOpt.classList.remove('active');
+                    roleClientRadio.checked = true;
+                    clientFields.style.display = 'block';
+                    influencerFields.style.display = 'none';
+                    submitBtn.textContent = 'Register Brand Account';
+                } else {
+                    influencerOpt.classList.add('active');
+                    clientOpt.classList.remove('active');
+                    roleInfluencerRadio.checked = true;
+                    clientFields.style.display = 'none';
+                    influencerFields.style.display = 'block';
+                    submitBtn.textContent = 'Register Creator Account';
+                }
+            }
+
+            clientOpt.addEventListener('click', () => setRole(true));
+            influencerOpt.addEventListener('click', () => setRole(false));
+        });
+    </script>
+}

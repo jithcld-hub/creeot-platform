@@ -1,0 +1,502 @@
+﻿@model CREEOT.WEB.Models.EscrowDepositViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = $"Fund Escrow Vault — {Model.CampaignTitle}";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/creeot-pages.css" asp-append-version="true" />
+    <style>
+        .escrow-deposit-wrapper {
+            padding: 130px 0 80px;
+        }
+
+        .deposit-grid {
+            display: grid;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .vault-summary-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px;
+            backdrop-filter: blur(25px);
+        }
+
+        .vault-amount-display {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin: 16px 0 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+            .vault-amount-display .amount {
+                font-size: 2.4rem;
+                font-weight: 800;
+                color: var(--mint);
+            }
+
+            .vault-amount-display .currency {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: var(--text-main);
+            }
+
+        .payment-methods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .payment-method-card {
+            background: rgba(7, 11, 25, 0.75);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            user-select: none;
+        }
+
+            .payment-method-card.active {
+                border-color: var(--mint);
+                background: rgba(0, 229, 163, 0.1);
+                color: #fff;
+                box-shadow: 0 0 15px var(--mint-glow);
+            }
+
+            .payment-method-card input {
+                display: none;
+            }
+
+        .method-panel {
+            display: none;
+        }
+
+            .method-panel.active-panel {
+                display: block;
+            }
+
+        .bank-quick-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .bank-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+            .bank-pill:hover, .bank-pill.selected {
+                border-color: var(--blue-light);
+                background: rgba(51, 68, 255, 0.15);
+                color: #fff;
+            }
+
+        /* @@media (max-width: 992px) {
+            .deposit-grid {
+                grid-template-columns: 1fr;
+            }
+        } */
+        /* UPI QR Container Styles */
+        .upi-subtabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .upi-tab-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--text-sub);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+            .upi-tab-btn.active {
+                background: rgba(0, 229, 163, 0.12);
+                border-color: var(--mint);
+                color: #ffffff;
+            }
+
+        .qr-vault-card {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            background: rgba(7, 11, 25, 0.9);
+            border: 1px solid rgba(0, 229, 163, 0.25);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: inset 0 0 25px rgba(0, 229, 163, 0.05);
+        }
+
+        .qr-frame {
+            position: relative;
+            padding: 10px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+            flex-shrink: 0;
+        }
+
+        .upi-qr-image {
+            display: block;
+            width: 160px;
+            height: 160px;
+            border-radius: 6px;
+        }
+
+        .qr-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .qr-badge {
+            align-self: flex-start;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--mint);
+            background: rgba(0, 229, 163, 0.1);
+            border: 1px solid rgba(0, 229, 163, 0.3);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .qr-amount {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .qr-instruction {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+            margin: 4px 0 8px;
+        }
+
+        .qr-app-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+            .qr-app-pills span {
+                font-size: 0.72rem;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #c0cbdf;
+                padding: 4px 10px;
+                border-radius: 6px;
+            }
+
+        @@media (max-width: 580px) {
+            .qr-vault-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .qr-badge {
+                align-self: center;
+            }
+
+            .qr-app-pills {
+                justify-content: center;
+            }
+        }
+    </style>
+}
+
+<div class="container escrow-deposit-wrapper">
+    <div class="auth-brand-header">
+        <div class="badge-verified">
+            <span class="pulse-dot"></span> Regulated Escrow Holding Vault
+        </div>
+        <h1 class="auth-brand-title">Lock Funds in Escrow</h1>
+        <p class="auth-brand-subtitle">Amount is deposited into the holding vault and blocked until you approve milestones.</p>
+    </div>
+
+    <div class="deposit-grid">
+        <!-- Form Area -->
+        <div class="auth-card" style="box-shadow: none;">
+            <form asp-action="Deposit" asp-controller="Escrow" method="post" id="depositForm" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="CampaignId" />
+                <input type="hidden" asp-for="PaymentMethod" id="selectedPaymentMethod" />
+
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <div class="auth-section-divider" style="margin-top: 0;">
+                    <span>Select Payment Channel</span>
+                </div>
+
+                <!-- 3 Payment Mode Buttons -->
+                <div class="payment-methods-grid">
+                    <div class="payment-method-card @(Model.PaymentMethod == "Card" ? "active" : "")" data-target="cardPanel" data-method="Card">
+                        💳 Card
+                    </div>
+                    <div class="payment-method-card @(Model.PaymentMethod == "NetBanking" ? "active" : "")" data-target="netbankingPanel" data-method="NetBanking">
+                        🏦 Net Banking
+                    </div>
+                    <div class="payment-method-card @(Model.PaymentMethod == "UPI" ? "active" : "")" data-target="upiPanel" data-method="UPI">
+                        ⚡ Instant UPI
+                    </div>
+                </div>
+
+                <!-- 1. CREDIT/DEBIT CARD PANEL -->
+                <div id="cardPanel" class="method-panel @(Model.PaymentMethod == "Card" ? "active-panel" : "")">
+                    <div class="form-group">
+                        <label asp-for="CardHolderName" class="form-label">Name on Card</label>
+                        <input asp-for="CardHolderName" class="form-control" placeholder="e.g. Rajesh Kumar" />
+                        <span asp-validation-for="CardHolderName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CardNumber" class="form-label">Card Number</label>
+                        <input asp-for="CardNumber" id="cardNumberInput" class="form-control" placeholder="4532 •••• •••• ••••" maxlength="19" />
+                        <span asp-validation-for="CardNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="ExpiryDate" class="form-label">Expiry (MM/YY)</label>
+                            <input asp-for="ExpiryDate" class="form-control" placeholder="MM/YY" maxlength="5" />
+                            <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Cvv" class="form-label">CVV</label>
+                            <input asp-for="Cvv" type="password" class="form-control" placeholder="•••" maxlength="4" />
+                            <span asp-validation-for="Cvv" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. NETBANKING PANEL -->
+                <div id="netbankingPanel" class="method-panel @(Model.PaymentMethod == "NetBanking" ? "active-panel" : "")">
+                    <label class="form-label">Popular Indian Banks</label>
+                    <div class="bank-quick-grid">
+                        <div class="bank-pill" onclick="selectBank('HDFC')">HDFC Bank</div>
+                        <div class="bank-pill" onclick="selectBank('ICICI')">ICICI Bank</div>
+                        <div class="bank-pill" onclick="selectBank('SBI')">State Bank of India</div>
+                        <div class="bank-pill" onclick="selectBank('AXIS')">Axis Bank</div>
+                        <div class="bank-pill" onclick="selectBank('KOTAK')">Kotak Mahindra</div>
+                        <div class="bank-pill" onclick="selectBank('YES')">Yes Bank</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="SelectedBank" class="form-label">Or Select Other Bank</label>
+                        <select asp-for="SelectedBank" id="bankDropdown" class="form-control">
+                            <option value="">-- Choose Bank --</option>
+                            <option value="HDFC">HDFC Bank</option>
+                            <option value="ICICI">ICICI Bank</option>
+                            <option value="SBI">State Bank of India</option>
+                            <option value="AXIS">Axis Bank</option>
+                            <option value="KOTAK">Kotak Mahindra Bank</option>
+                            <option value="PNB">Punjab National Bank</option>
+                            <option value="BOB">Bank of Baroda</option>
+                            <option value="INDUSIND">IndusInd Bank</option>
+                        </select>
+                        <span asp-validation-for="SelectedBank" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- 3. UPI PANEL -->
+                <div id="upiPanel" class="method-panel @(Model.PaymentMethod == "UPI" ? "active-panel" : "")">
+
+                    <!-- Sub-tab Selector for QR vs Manual UPI ID -->
+                    <div class="upi-subtabs">
+                        <button type="button" class="upi-tab-btn active" id="btnUpiQr" onclick="switchUpiMode('qr')">
+                            📷 Scan Dynamic QR Code
+                        </button>
+                        <button type="button" class="upi-tab-btn" id="btnUpiManual" onclick="switchUpiMode('manual')">
+                            ✍️ Enter UPI ID / VPA
+                        </button>
+                    </div>
+
+                    <!-- Mode A: Scan QR Code -->
+                    <div id="upiQrSection" class="upi-mode-content">
+                        <div class="qr-vault-card">
+                            <div class="qr-frame">
+                                @{
+                                    // Replace with your real Current Account VPA / Merchant details
+                                    var currentAccountVpa = "creeotescrow@hdfcbank";
+                                    var merchantName = "CREEOT ESCROW SERVICES";
+                                    var upiPayload = $"upi://pay?pa={currentAccountVpa}&pn={Uri.EscapeDataString(merchantName)}&am={Model.TotalBudget:F2}&cu=INR&tn={Uri.EscapeDataString($"Escrow Deposit CID-{Model.CampaignId}")}";
+                                    var qrApiUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data={Uri.EscapeDataString(upiPayload)}";
+                                }
+
+                                <img src="@qrApiUrl" alt="Scan to pay into Escrow Vault" class="upi-qr-image" />
+                                <div class="qr-glow-overlay"></div>
+                            </div>
+
+                            <div class="qr-details">
+                                <div class="qr-badge">Zero Convenience Fee</div>
+                                <div class="qr-amount">₹@Model.TotalBudget.ToString("N0")</div>
+                                <p class="qr-instruction">
+                                    Open <strong>GPay, PhonePe, Paytm</strong>, or any BHIM UPI app and scan the QR code to lock funds.
+                                </p>
+                                <div class="qr-app-pills">
+                                    <span>Google Pay</span>
+                                    <span>PhonePe</span>
+                                    <span>Paytm</span>
+                                    <span>BHIM</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 18px;">
+                            <label class="form-label">UPI Reference / UTR Number (Post Payment)</label>
+                            <input asp-for="UpiId" class="form-control" id="upiUtrInput" placeholder="Enter 12-digit UTR or Txn ID (e.g. 423589012345)" />
+                            <span asp-validation-for="UpiId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Mode B: Enter UPI ID Manually -->
+                    <div id="upiManualSection" class="upi-mode-content" style="display: none;">
+                        <div class="form-group">
+                            <label asp-for="UpiId" class="form-label">Virtual Payment Address (VPA / UPI ID)</label>
+                            <input asp-for="UpiId" id="manualVpaInput" class="form-control" placeholder="yourname@okhdfcbank or mobile@upi" />
+                            <span asp-validation-for="UpiId" class="text-danger"></span>
+                        </div>
+                        <p style="font-size:0.8rem; color:var(--text-sub); margin-top:-6px;">
+                            A collect request for <strong>₹@Model.TotalBudget.ToString("N0")</strong> will be sent to your UPI app.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Terms -->
+                <div class="auth-check" style="margin-top: 24px;">
+                    <input type="checkbox" asp-for="AcceptEscrowTerms" id="AcceptEscrowTerms" />
+                    <label for="AcceptEscrowTerms">
+                        I authorize CREEOT to hold <strong>@Model.TotalBudget.ToString("N0") @Model.Currency</strong> in segregated Escrow custody. Funds cannot be withdrawn until milestones are reviewed.
+                    </label>
+                </div>
+                <span asp-validation-for="AcceptEscrowTerms" class="text-danger" style="margin-top:-14px; margin-bottom:18px;"></span>
+
+                <button type="submit" class="btn-auth-submit" id="submitDepositBtn">
+                    Block &amp; Lock @Model.TotalBudget.ToString("N0") @Model.Currency in Escrow →
+                </button>
+
+                <div class="auth-security-badge">
+                    <span class="lock-icon">&#128274;</span>
+                    <span>Direct Current Account Vault Protection • RBI Compliant</span>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sidebar Summary -->
+        <div class="vault-summary-box">
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Campaign Overview</h3>
+            <p style="color: var(--text-sub); font-size: 0.85rem;">@Model.CampaignTitle</p>
+
+            <div class="vault-amount-display">
+                <span class="amount">@Model.TotalBudget.ToString("N0")</span>
+                <span class="currency">@Model.Currency</span>
+            </div>
+
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Milestone Fund Allocation</h4>
+            <table class="creeot-table" style="font-size: 0.82rem;">
+                <tbody>
+                    @foreach (var m in Model.Milestones)
+                    {
+                        <tr>
+                            <td>@m.OrderSequence. @m.MilestoneTitle</td>
+                            <td style="text-align: right; font-weight: 700; color: var(--mint);">
+                                @m.Amount.ToString("N0") @Model.Currency
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const methodCards = document.querySelectorAll('.payment-method-card');
+            const hiddenMethodInput = document.getElementById('selectedPaymentMethod');
+            const panels = document.querySelectorAll('.method-panel');
+
+            methodCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    methodCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+
+                    const targetPanelId = card.getAttribute('data-target');
+                    const methodName = card.getAttribute('data-method');
+
+                    hiddenMethodInput.value = methodName;
+
+                    panels.forEach(p => p.classList.remove('active-panel'));
+                    document.getElementById(targetPanelId).classList.add('active-panel');
+                });
+            });
+
+            // Card formatting helper (adds space every 4 digits)
+            const cardInput = document.getElementById('cardNumberInput');
+            cardInput?.addEventListener('input', (e) => {
+                let val = e.target.value.replace(/\D/g, '').substring(0, 16);
+                val = val.match(/.{1,4}/g)?.join(' ') || val;
+                e.target.value = val;
+            });
+        });
+
+        function selectBank(code) {
+            const dropdown = document.getElementById('bankDropdown');
+            if (dropdown) dropdown.value = code;
+
+            document.querySelectorAll('.bank-pill').forEach(p => p.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+                function switchUpiMode(mode) {
+            const qrBtn = document.getElementById('btnUpiQr');
+            const manualBtn = document.getElementById('btnUpiManual');
+            const qrSection = document.getElementById('upiQrSection');
+            const manualSection = document.getElementById('upiManualSection');
+
+            if (mode === 'qr') {
+                qrBtn.classList.add('active');
+                manualBtn.classList.remove('active');
+                qrSection.style.display = 'block';
+                manualSection.style.display = 'none';
+            } else {
+                manualBtn.classList.add('active');
+                qrBtn.classList.remove('active');
+                qrSection.style.display = 'none';
+                manualSection.style.display = 'block';
+            }
+        }
+
+    </script>
+}

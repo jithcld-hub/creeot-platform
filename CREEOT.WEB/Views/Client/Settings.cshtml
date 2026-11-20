@@ -1,0 +1,330 @@
+﻿@model CREEOT.WEB.Models.BrandSettingsViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "Brand & Escrow Billing Settings — CREEOT";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/creeot-auth.css" asp-append-version="true" />
+    <style>
+        .settings-wrapper {
+            padding: 120px 0 80px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .settings-nav {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 16px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: sticky;
+            top: 110px;
+        }
+
+        .settings-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .settings-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .settings-nav-btn.active {
+            background: rgba(0, 229, 163, 0.12);
+            color: var(--mint);
+            border: 1px solid rgba(0, 229, 163, 0.3);
+        }
+
+        .settings-section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(25px);
+        }
+
+        .settings-header-box {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .settings-header-box h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .settings-header-box p {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin: 0;
+        }
+
+        .toggle-switch-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .toggle-switch-row:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-info strong {
+            display: block;
+            font-size: 0.88rem;
+            color: var(--text-main);
+        }
+
+        .toggle-info p {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            margin: 2px 0 0 0;
+        }
+
+        @@media (max-width: 992px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            .settings-nav {
+                position: relative;
+                top: 0;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+        }
+    </style>
+}
+
+<div class="container settings-wrapper">
+    <!-- Top Welcome Card -->
+    <div class="dash-welcome-card" style="margin-bottom: 30px;">
+        <div>
+            <span class="badge-role">Brand Administration</span>
+            <h1 class="welcome-heading">Account &amp; Brand Settings</h1>
+            <p class="welcome-subtext">Manage corporate identity, GSTIN/VAT numbers, escrow billing parameters, and security.</p>
+        </div>
+        <div class="dash-quick-actions">
+            <a asp-controller="Escrow" asp-action="Index" class="btn-dash btn-dash-secondary">🛡️ Escrow Ledger</a>
+        </div>
+    </div>
+
+    <form asp-action="Settings" asp-controller="Client" method="post" id="settingsForm" novalidate>
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        <div class="settings-grid">
+            <!-- Left-rail Jump Navigation -->
+            <aside class="settings-nav">
+                <button type="button" class="settings-nav-btn active" onclick="scrollToSection('sec-company')">
+                    🏢 Company Profile
+                </button>
+                <button type="button" class="settings-nav-btn" onclick="scrollToSection('sec-rep')">
+                    👤 Representative
+                </button>
+                <button type="button" class="settings-nav-btn" onclick="scrollToSection('sec-escrow')">
+                    🛡️ Escrow &amp; Tax
+                </button>
+                <button type="button" class="settings-nav-btn" onclick="scrollToSection('sec-security')">
+                    🔒 Security &amp; Password
+                </button>
+                <button type="button" class="settings-nav-btn" onclick="scrollToSection('sec-notifications')">
+                    🔔 Notifications
+                </button>
+            </aside>
+
+            <!-- Right-rail Main Form Panels -->
+            <div class="settings-content">
+                <!-- 1. Company Profile -->
+                <div class="settings-section-card" id="sec-company">
+                    <div class="settings-header-box">
+                        <h3>Business &amp; Brand Identity</h3>
+                        <p>This brand information is presented to creators on digital contracts and campaign scopes.</p>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="CompanyName" class="form-label"></label>
+                            <input asp-for="CompanyName" class="form-control" placeholder="e.g. Apex Consumer Brands" />
+                            <span asp-validation-for="CompanyName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Industry" class="form-label"></label>
+                            <select asp-for="Industry" class="form-control">
+                                <option value="E-Commerce">E-Commerce &amp; Retail</option>
+                                <option value="Fashion & Beauty">Fashion &amp; Apparel</option>
+                                <option value="Tech & Electronics">Technology &amp; Software</option>
+                                <option value="FMCG & Food">Food &amp; Beverages</option>
+                                <option value="Travel & Hospitality">Travel &amp; Hospitality</option>
+                                <option value="Health & Fitness">Health &amp; Fitness</option>
+                            </select>
+                            <span asp-validation-for="Industry" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="WebsiteUrl" class="form-label"></label>
+                        <input asp-for="WebsiteUrl" class="form-control" placeholder="https://company.com" />
+                        <span asp-validation-for="WebsiteUrl" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- 2. Representative Details -->
+                <div class="settings-section-card" id="sec-rep">
+                    <div class="settings-header-box">
+                        <h3>Authorized Representative</h3>
+                        <p>Contact person designated for milestone approval, dispute communication, and account recovery.</p>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" readonly style="opacity: 0.65; cursor: not-allowed;" />
+                            <span class="text-sub" style="font-size:0.75rem;">Email change requires contacting platform compliance.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="+91 98765 43210" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- 3. Escrow & Tax Billing -->
+                <div class="settings-section-card" id="sec-escrow">
+                    <div class="settings-header-box">
+                        <h3>Tax Compliance &amp; Escrow Region</h3>
+                        <p>Multi-jurisdiction billing details for commercial invoicing across India, UAE, and Qatar.</p>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="CountryCode" class="form-label"></label>
+                            <select asp-for="CountryCode" class="form-control">
+                                <option value="IN">India (INR)</option>
+                                <option value="AE">UAE (AED)</option>
+                                <option value="QA">Qatar (QAR)</option>
+                            </select>
+                            <span asp-validation-for="CountryCode" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TaxOrVatNumber" class="form-label"></label>
+                            <input asp-for="TaxOrVatNumber" class="form-control" placeholder="GSTIN (India) / TRN (UAE/Qatar)" />
+                            <span asp-validation-for="TaxOrVatNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Security & Password -->
+                <div class="settings-section-card" id="sec-security">
+                    <div class="settings-header-box">
+                        <h3>Account Security</h3>
+                        <p>Leave these fields blank if you do not want to change your password.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CurrentPassword" class="form-label"></label>
+                        <input asp-for="CurrentPassword" type="password" class="form-control" placeholder="Enter current password" autocomplete="current-password" />
+                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="auth-two-cols">
+                        <div class="form-group">
+                            <label asp-for="NewPassword" class="form-label"></label>
+                            <input asp-for="NewPassword" type="password" class="form-control" placeholder="Min. 8 characters" autocomplete="new-password" />
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ConfirmNewPassword" class="form-label"></label>
+                            <input asp-for="ConfirmNewPassword" type="password" class="form-control" placeholder="Confirm new password" autocomplete="new-password" />
+                            <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Notification Preferences -->
+                <div class="settings-section-card" id="sec-notifications">
+                    <div class="settings-header-box">
+                        <h3>Escrow Milestone Alerts</h3>
+                        <p>Manage real-time operational notifications sent to your registered work email.</p>
+                    </div>
+
+                    <div class="toggle-switch-row">
+                        <div class="toggle-info">
+                            <strong>Deliverable Submission Alerts</strong>
+                            <p>Receive notifications immediately when creators submit draft links or live post URLs.</p>
+                        </div>
+                        <input type="checkbox" asp-for="NotifyOnMilestoneSubmission" style="width:18px; height:18px; accent-color: var(--mint); cursor:pointer;" />
+                    </div>
+
+                    <div class="toggle-switch-row">
+                        <div class="toggle-info">
+                            <strong>Fund Disbursement Receipts</strong>
+                            <p>Receive cryptographic receipts whenever escrow milestone funds release into creator wallets.</p>
+                        </div>
+                        <input type="checkbox" asp-for="NotifyOnEscrowRelease" style="width:18px; height:18px; accent-color: var(--mint); cursor:pointer;" />
+                    </div>
+                </div>
+
+                <!-- Submit Button Bar -->
+                <div style="display:flex; justify-content: flex-end; gap: 14px; margin-top: 10px;">
+                    <a asp-action="Dashboard" asp-controller="Client" class="btn-portal btn-ghost">Cancel</a>
+                    <button type="submit" class="btn-portal btn-mint" style="padding: 12px 28px;">
+                        Save Brand Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function scrollToSection(sectionId) {
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            document.querySelectorAll('.settings-nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+}

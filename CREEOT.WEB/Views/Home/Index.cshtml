@@ -1,0 +1,237 @@
+﻿@model HomeIndexViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "CREEOT - INFLUENCERS . BRANDS . GROWTH";
+}
+@{
+    var currencySymbol = ViewBag.ActiveCurrencySymbol as string ?? "₹";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/explore.css" asp-append-version="true" />
+}
+
+<main>
+    <!-- Page Header Banner -->
+    <section class="hero">
+        <div class="container">
+            <div class="badge-verified">
+                <span class="pulse-dot"></span>
+                Milestone-Protected Influencer Platform
+            </div>
+            <h1 class="hero-title">
+                Assign Campaigns with Confidence.<br />
+                <span class="gradient-headline">Funds Held Safely in Escrow.</span>
+            </h1>
+            <p class="hero-desc">
+                Discover verified influencers across TikTok, Instagram, and YouTube. Agree on the budget, lock the fee upfront, and release payment only when you review and approve the live content.
+            </p>
+
+            <!-- Campaign Finder / Filter Bar -->
+            <form method="get" asp-controller="Explore" asp-action="Index" target="_blank" class="filter-panel">
+                <div class="filter-cell">
+                    <label for="targetMarketSelect" class="filter-label">Target Market</label>
+                    <select id="targetMarketSelect" name="targetMarket" class="form-select" asp-for="SelectedCountryCode">
+                        <option value="">All Regions</option>
+                            @foreach (var country in Model.Countries)
+                            {
+                                <option value="@country.CountryCode">
+                                    @country.CountryName (@country.CurrencyCode@(string.IsNullOrEmpty(country.CurrencySymbol) ? "" : $" - {country.CurrencySymbol}"))
+                                </option>
+                            }
+                    </select>
+                </div>
+                <div class="filter-cell">
+                    <label for="platformSelect" class="filter-label">Platform</label>
+                    <select id="platformSelect" name="platform" class="form-select">
+                        <option value="">All Platform</option>
+                            @foreach (var platform in Model.Platforms)
+                            {
+                                <option value="@platform.PlatformCode">
+                                    @platform.PlatformCode
+                                </option>
+                            }
+                    </select>
+                </div>
+                <div class="filter-cell">
+                    <label for="nicheSelect" class="filter-label">Niche Category</label>
+                    <select id="nicheSelect" name="niche" class="form-select">
+                         <option value="">All Niche Category</option>
+                            @foreach (var niche in Model.Niches)
+                            {
+                                <option value="@niche.NicheCode">
+                                    @niche.NicheName
+                                </option>
+                            }
+                    </select>
+                </div>
+                <div class="filter-cell">
+                    <label for="budgetRangeSelect" class="filter-label">Budget Range</label>
+                    <select id="budgetRangeSelect" name="budgetRangeId" class="form-select">
+                        <option value="">All Budget Range</option>
+                        @foreach (var range in Model.BudgetRanges)
+                        {
+                            var isSelected = Model.SelectedBudgetRangeId == range.Id;
+                            <option value="@range.Id" selected="@(isSelected ? "selected" : null)">
+                                @range.GetFormattedLabel(currencySymbol)
+                            </option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn-portal btn-mint" style="height:100%; border:none; border-radius:12px; padding:0 24px;">
+                    Search
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Dual Role Registration Cards -->
+    <section id="portals" class="container">
+        <div class="roles-split">
+            <!-- Business/Brand Portal -->
+            <div class="role-card">
+                <span class="role-badge">For Companies & Brands</span>
+                <h3>Hire Vetted Creators</h3>
+                <p>Browse detailed creator metrics including average video views, audience demographics, and star ratings. Set custom project milestones and deposit payments safely without giving up control.</p>
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    if (User.IsInRole("Client"))
+                    {
+                        @* Brand Client: Direct to Campaign Creation *@
+                        <a asp-controller="Campaigns" asp-action="Create" class="btn-portal btn-mint">
+                            Start New Campaign →
+                        </a>
+                    }
+                }
+                else
+                {
+                    @* Guest / Unauthenticated Visitor *@
+                    <a asp-controller="Account" asp-action="SignUp" asp-route-role="Client" class="btn-portal btn-mint">
+                        Register as Client →
+                    </a>
+                }
+            </div>
+
+            <!-- Creator/Influencer Portal -->
+            <div class="role-card">
+                <span class="role-badge" style="color:#7d96ff;">For Influencers & Talent</span>
+                <h3>Monetize Your Audience</h3>
+                <p>Never worry about late payments again. Every campaign assigned to you has its funds pre-deposited into CREEOT's escrow vault before you even begin drafting or filming.</p>
+                @if (User.Identity == null || !User.Identity.IsAuthenticated)
+                {
+                    @* Guest / Anonymous Visitor *@
+                    <a asp-controller="Account" asp-action="SignUp" asp-route-role="Influencer" class="btn-portal btn-ghost">
+                        Register as Creator →
+                    </a>
+                }
+                else if (User.IsInRole("Influencer"))
+                {
+                    @* Already logged in as Creator: Take them to their Studio Dashboard *@
+                    <a asp-controller="Creator" asp-action="Dashboard" class="btn-portal btn-ghost">
+                        🎬 Creator Studio →
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Escrow Breakdown Timeline -->
+    <section id="escrow" class="container">
+        <div class="escrow-section">
+            <div class="section-header">
+                <h2>The CREEOT Escrow Guarantee</h2>
+                <p>A transparent financial system safeguarding both the brand's capital and the creator's effort.</p>
+            </div>
+
+            <div class="steps-flow">
+                <div class="step-item">
+                    <div class="step-index">01</div>
+                    <h4>Campaign Agreement</h4>
+                    <p>Client and creator align on deliverables, content requirements, and total budget.</p>
+                </div>
+
+                <div class="step-item active-escrow">
+                    <div class="step-index">02</div>
+                    <h4>Funds Blocked in Escrow</h4>
+                    <p>Client deposits the campaign amount. CREEOT locks the funds securely in holding.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-index">03</div>
+                    <h4>Delivery & Review</h4>
+                    <p>Creator shoots, publishes, and submits live engagement links directly inside the app.</p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-index">04</div>
+                    <h4>Approval & Release</h4>
+                    <p>Client approves the deliverable, instantly releasing payment to the influencer's wallet.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Creator Marketplace Showcase -->
+    <section id="creators" class="container">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:36px;">
+            <div>
+                <h2 style="font-size:2.2rem; font-weight:800; letter-spacing:-0.02em;">Trending Influencers</h2>
+                <p style="color:var(--text-sub); margin-top:6px;">Verified stats, transparent rates, ready for assignment.</p>
+            </div>
+            <a asp-controller="Explore" asp-action="Index" target="_blank" rel="noopener noreferrer" style="color:var(--mint); font-weight:600; font-size:0.9rem;">View All Profiles →</a>
+        </div>
+
+        <div class="creator-grid">
+            @if (Model != null && Model.Influencers != null && Model.Influencers.Any())
+            {
+                foreach (var creator in Model.Influencers)
+                {
+                    <div class="creator-card">
+                        <div>
+                            <div class="creator-top">
+                                <div class="creator-avatar">@creator.Initials</div>
+                                <div class="creator-meta">
+                                    <h4>@creator.FullName<span class="verified-icon" title="Verified">✔</span></h4>
+                                    <span>@creator.PrimaryNiche • @creator.CountryCode</span>
+                                </div>
+                            </div>
+
+                            <div class="metrics-pill-box">
+                                <div class="metric-item">
+                                    <div class="val">@creator.FormattedViews</div>
+                                    <div class="lbl">Avg Views</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="val" style="color:var(--mint);">@creator.CurrentRating ★</div>
+                                    <div class="lbl">Rating (@creator.CurrentReviewCount)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="creator-footer">
+                            <div class="price-badge">
+                                <span>Deliverable from</span>
+                                <strong>@creator.PriceString</strong>
+                            </div>
+                            @if (User.IsInRole("Influencer"))
+                            {
+                                
+                            }
+                            else
+                            {
+                                <a asp-controller="Campaigns" 
+                                       asp-action="Assign" 
+                                       asp-route-influencerId="@creator.InfluencerId" 
+                                       class="btn-portal btn-ghost" 
+                                       style="padding:8px 16px; font-size:0.8rem;">
+                                        Assign Work
+                                </a>
+                            }
+                                
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+</main>

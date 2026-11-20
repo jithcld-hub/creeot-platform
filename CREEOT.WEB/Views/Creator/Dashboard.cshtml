@@ -1,0 +1,340 @@
+﻿@model CREEOT.WEB.Models.CreatorDashboardViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = $"{Model.CreatorName} — Creator Studio & Escrow Wallet";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-dashboard.css" asp-append-version="true" />
+    <style>
+        .creator-dash-wrapper {
+            padding: 120px 0 80px;
+        }
+
+        .creator-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .badge-platform {
+            background: rgba(51, 68, 255, 0.15);
+            color: #7d96ff;
+            border: 1px solid rgba(51, 68, 255, 0.3);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .task-action-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .task-action-card:hover {
+            border-color: rgba(0, 229, 163, 0.3);
+        }
+
+        .task-detail-left h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .task-detail-left p {
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            margin: 0;
+        }
+
+        .task-escrow-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 229, 163, 0.1);
+            border: 1px solid rgba(0, 229, 163, 0.3);
+            color: var(--mint);
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        .submission-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 9, 19, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .submission-modal-backdrop.show {
+            display: flex;
+        }
+
+        .submission-modal-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+    </style>
+}
+
+<div class="container creator-dash-wrapper">
+    <!-- Header Greeting Card -->
+    <div class="dash-welcome-card">
+        <div>
+            <span class="badge-role" style="background: rgba(51, 68, 255, 0.15); color: #7d96ff;">Creator Studio</span>
+            <h1 class="welcome-heading">@Model.CreatorName</h1>
+            <div class="creator-badge-row">
+                <span style="color: var(--mint); font-weight: 600; font-size: 0.9rem;">@Model.Handle</span>
+                <span class="badge-platform">@Model.PrimaryPlatform</span>
+                <span class="stage-tag">@Model.PrimaryNiche</span>
+                <span style="color: #f59e0b; font-size: 0.85rem;">★ @Model.CurrentRating.ToString("F1") (@Model.TotalReviews)</span>
+            </div>
+        </div>
+        <div class="dash-quick-actions">
+            <a asp-controller="Creator" asp-action="Earnings" class="btn-dash btn-dash-primary">💰 Withdraw Wallet</a>
+            <a asp-controller="Creator" asp-action="Settings" class="btn-dash btn-dash-secondary">⚙️ Studio Settings</a>
+        </div>
+    </div>
+
+    <!-- 4 High-Level Creator Metrics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Secured in Escrow</span>
+                <span style="font-size: 1.2rem;">🔒</span>
+            </div>
+            <div class="stat-value text-mint">₹@Model.TotalEscrowSecured.ToString("N0")</div>
+            <div class="stat-note">Guaranteed funds locked by brands for your active work.</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Cleared Balance</span>
+                <span style="font-size: 1.2rem;">💰</span>
+            </div>
+            <div class="stat-value" style="color: #7d96ff;">₹@Model.ClearedWalletBalance.ToString("N0")</div>
+            <div class="stat-note">Approved funds ready for immediate local bank withdrawal.</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Active Assignments</span>
+                <span style="font-size: 1.2rem;">🎬</span>
+            </div>
+            <div class="stat-value">@Model.ActiveTasksCount</div>
+            <div class="stat-note">Milestones currently in production or filming.</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Under Brand Review</span>
+                <span style="font-size: 1.2rem;">⚖</span>
+            </div>
+            <div class="stat-value @(Model.PendingBrandReviewTasks.Any() ? "text-amber" : "")">
+                @Model.PendingBrandReviewTasks.Count
+            </div>
+            <div class="stat-note">Submissions awaiting 48-hr brand approval window.</div>
+        </div>
+    </div>
+
+    <!-- Main Studio Split Grid -->
+    <div class="dash-main-grid">
+        <!-- Left: Work Due / Submission Actions -->
+        <div>
+            <!-- Active Tasks / Film & Upload -->
+            <div class="dash-panel" style="margin-bottom: 24px;">
+                <div class="panel-header">
+                    <h3>Deliverables To Submit</h3>
+                    <span class="panel-sub">100% pre-funded milestones ready for your draft or live post link</span>
+                </div>
+
+                @if (Model.ActiveTasks.Any())
+                {
+                    foreach (var task in Model.ActiveTasks)
+                    {
+                        <div class="task-action-card">
+                            <div class="task-detail-left">
+                                <h4>@task.MilestoneTitle</h4>
+                                <p>Campaign: <strong>@task.CampaignTitle</strong> • Client: <strong style="color:var(--text-main);">@task.ClientCompanyName</strong></p>
+                                <div style="margin-top: 8px;">
+                                    <span class="task-escrow-pill">🔒 ₹@task.Amount.ToString("N0") @task.Currency Guaranteed</span>
+                                    <span style="font-size: 0.78rem; color: var(--text-sub); margin-left: 10px;">Due by @task.DeadlineDate.ToString("MMM dd")</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-portal btn-mint btn-sm" onclick="openSubmitModal(@task.MilestoneId, '@task.MilestoneTitle')">
+                                Submit Work →
+                            </button>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="text-align: center; padding: 40px; color: var(--text-sub);">
+                        <div style="font-size: 2rem; margin-bottom: 8px;">🎬</div>
+                        <h4 style="color:#fff; margin-bottom: 4px;">No Pending Deliverables</h4>
+                        <p style="font-size:0.85rem;">You are all caught up! New brand assignments will appear here.</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Submissions Under Inspection -->
+            @if (Model.PendingBrandReviewTasks.Any())
+            {
+                <div class="dash-panel">
+                    <div class="panel-header">
+                        <h3>Submitted &amp; Awaiting Brand Review</h3>
+                        <span class="panel-sub">Funds release automatically upon client sign-off or timeout</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="creeot-table">
+                            <thead>
+                                <tr>
+                                    <th>Deliverable</th>
+                                    <th>Type</th>
+                                    <th>Escrow Locked</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.PendingBrandReviewTasks)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="collab-name">@p.MilestoneTitle</div>
+                                            <div class="collab-brand">@p.CampaignTitle</div>
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(p.LivePostUrl))
+                                            {
+                                                <span class="badge-escrow">Live Verification</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="stage-tag">Draft Preview</span>
+                                            }
+                                        </td>
+                                        <td><strong class="text-mint">₹@p.Amount.ToString("N0") @p.Currency</strong></td>
+                                        <td>
+                                            <span class="stage-tag" style="color: #f59e0b;">⏳ In 48h Inspection Window</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Right: Escrow Protection Guarantees & Payout Ledger -->
+        <div>
+            <!-- Escrow Safety Guarantee Box -->
+            <div class="dash-panel" style="background: rgba(14, 23, 50, 0.45); margin-bottom: 24px;">
+                <div class="panel-header">
+                    <h3>CREEOT Creator Shield</h3>
+                    <span class="panel-sub">Zero payment chasing guarantee</span>
+                </div>
+                <ul class="policy-bullets" style="margin: 0; font-size: 0.84rem;">
+                    <li><strong>Funds Upfront:</strong> You never film without 100% of the milestone locked in holding.</li>
+                    <li><strong>No Net-90 Delays:</strong> Once approved, money credits instantly into your withdrawable wallet.</li>
+                    <li><strong>Anti-Ghosting Safeguard:</strong> If a brand doesn't respond to verified live posts within 72 hours, funds auto-release.</li>
+                </ul>
+            </div>
+
+            <!-- Quick Account Summary -->
+            <div class="dash-panel">
+                <div class="panel-header">
+                    <h3>Studio Quick Links</h3>
+                    <span class="panel-sub">Manage profile &amp; payouts</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <a asp-controller="Creator" asp-action="Earnings" class="btn-table-action" style="padding:10px 14px; text-align:center;">
+                        💰 Open Escrow Wallet &amp; Payouts
+                    </a>
+                    <a asp-controller="Creator" asp-action="Settings" class="btn-table-action" style="padding:10px 14px; text-align:center;">
+                        ⚙️ Update Rates &amp; Social Channels
+                    </a>
+                    <a asp-controller="Home" asp-action="EscrowSecurity" class="btn-table-action" style="padding:10px 14px; text-align:center;">
+                        🛡️ Escrow Compliance Rules
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Dialog for Submitting Draft or Live URL -->
+<div class="submission-modal-backdrop" id="submissionModal">
+    <div class="submission-modal-box">
+        <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:4px;" id="modalTitle">Submit Deliverable</h3>
+        <p style="font-size:0.85rem; color:var(--text-sub); margin-bottom:20px;">
+            Upload your draft preview link or live post URL for brand review.
+        </p>
+
+        <form asp-action="SubmitMilestone" asp-controller="Creator" method="post" id="submitMilestoneForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="milestoneId" id="modalMilestoneId" />
+
+            <div class="form-group">
+                <label class="form-label">Draft Preview Link (Google Drive / Frame.io / Unlisted YouTube)</label>
+                <input type="url" name="draftUrl" class="form-control" placeholder="https://..." />
+            </div>
+
+            <div class="auth-section-divider" style="margin: 16px 0;">
+                <span>OR (IF READY TO GO LIVE)</span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Live Post URL (Instagram Reel / YouTube / TikTok)</label>
+                <input type="url" name="liveUrl" class="form-control" placeholder="https://www.instagram.com/reel/..." />
+                <span style="font-size:0.75rem; color:var(--text-sub);">Submitting a live URL triggers the final inspection window for payout release.</span>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:24px;">
+                <button type="button" class="btn-portal btn-ghost btn-sm" onclick="closeSubmitModal()">Cancel</button>
+                <button type="submit" class="btn-portal btn-mint btn-sm">Confirm Submission</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openSubmitModal(milestoneId, title) {
+            document.getElementById('modalMilestoneId').value = milestoneId;
+            document.getElementById('modalTitle').textContent = 'Submit: ' + title;
+            document.getElementById('submissionModal').classList.add('show');
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submissionModal').classList.remove('show');
+        }
+
+        // Close on backdrop click
+        document.getElementById('submissionModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'submissionModal') closeSubmitModal();
+        });
+    </script>
+}

@@ -1,0 +1,240 @@
+﻿@model ExploreViewModel
+@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "CREEOT - Global Discovery Engine";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/explore.css" asp-append-version="true" />
+}
+
+<main>
+    <section class="hero">
+        <div class="container">
+            <div class="badge-verified">
+                <span class="pulse-dot"></span> Global Talent Search
+            </div>
+            <h1 class="explore-headline">Worldwide Search (Open Market)</h1>
+            <p class="explore-subtitle">Search 250M+ external social media profiles.</p>
+        </div>
+    </section>
+
+    <div class="container explore-container">
+        <!-- Search & Filter Bar -->
+        <form method="get" asp-controller="Explore" asp-action="Global" class="filter-card">
+            <div class="filter-grid">
+                <div class="filter-field search-field">
+                    <label>Search Creator</label>
+                    <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Name or handle..." />
+                </div>
+
+                <div class="filter-field">
+                    <label>Target Market</label>
+                    <select name="targetMarket">
+                        <option value="">All Countries</option>
+                        <option value="IN" selected="@(Model.targetMarket == "IN")">India (INR)</option>
+                        <option value="AE" selected="@(Model.targetMarket == "AE")">UAE (AED)</option>
+                        <option value="QA" selected="@(Model.targetMarket == "QA")">Qatar (QAR)</option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label>Platform</label>
+                    <select name="platform">
+                        <option value="">All Platforms</option>
+                        <option value="instagram" selected="@(Model.Platform == "instagram")">Instagram Reels</option>
+                        <option value="youtube" selected="@(Model.Platform == "youtube")">YouTube</option>
+                        <option value="tiktok" selected="@(Model.Platform == "tiktok")">TikTok</option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label>Category</label>
+                    <select name="niche">
+                        <option value="">All Categories</option>
+                        <option value="lifestyle" selected="@(Model.Niche == "lifestyle")">Lifestyle & Fashion</option>
+                        <option value="tech" selected="@(Model.Niche == "tech")">Tech & Gadgets</option>
+                        <option value="food" selected="@(Model.Niche == "food")">Food & Dining</option>
+                        <option value="travel" selected="@(Model.Niche == "travel")">Travel & Tourism</option>
+                        <option value="fitness" selected="@(Model.Niche == "fitness")">Fitness & Health</option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label>Budget Tier</label>
+                    <select name="budgetRangeId">
+                        <option value="">Any Budget</option>
+                        <option value="1" selected="@(Model.budgetRangeId == 1)">Under 10k</option>
+                        <option value="2" selected="@(Model.budgetRangeId == 2)">10k – 30k</option>
+                        <option value="3" selected="@(Model.budgetRangeId == 3)">30k – 75k</option>
+                        <option value="4" selected="@(Model.budgetRangeId == 4)">75k+</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <a asp-controller="Explore" asp-action="Global" class="btn-portal btn-ghost btn-sm">Clear Filters</a>
+                <button type="submit" class="btn-portal btn-mint btn-sm">Apply Filters</button>
+            </div>
+        </form>
+
+        <!-- Meta Toolbar (Counts + Sorter) -->
+        <div class="explore-toolbar">
+            <div class="results-count">
+                Showing <strong>@Model.Influencers.Count()</strong> of <strong>@Model.TotalItems</strong> creators
+            </div>
+
+            <form method="get" asp-controller="Explore" asp-action="Global" class="sort-form">
+                <input type="hidden" name="searchTerm" value="@Model.SearchTerm" />
+                <input type="hidden" name="targetMarket" value="@Model.targetMarket" />
+                <input type="hidden" name="platform" value="@Model.Platform" />
+                <input type="hidden" name="niche" value="@Model.Niche" />
+                <input type="hidden" name="budgetRangeId" value="@Model.budgetRangeId" />
+
+                <label>Sort By:</label>
+                <select name="sortBy" onchange="this.form.submit()">
+                    <option value="views_desc" selected="@(Model.SortBy == "views_desc")">Highest Views</option>
+                    <option value="rating_desc" selected="@(Model.SortBy == "rating_desc")">Highest Rating</option>
+                    <option value="price_asc" selected="@(Model.SortBy == "price_asc")">Price: Low to High</option>
+                    <option value="price_desc" selected="@(Model.SortBy == "price_desc")">Price: High to Low</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- Creator Grid -->
+        <div class="creator-grid">
+            @if (Model.Influencers.Any())
+            {
+                foreach (var creator in Model.Influencers)
+                {
+                    <div class="creator-card">
+                        <div>
+                            <div class="creator-top">
+                                <div class="creator-avatar">@creator.Initials</div>
+                                <div class="creator-meta">
+                                    <h4>
+                                        @creator.FullName
+                                        @if (creator.IsVerified)
+                                        {
+                                            <span class="verified-icon" title="Vetted Creator">✔</span>
+                                        }
+                                    </h4>
+                                    <span>@creator.Handle • <strong style="color:var(--text-main);">@creator.CountryCode</strong></span>
+                                </div>
+                            </div>
+
+                            <div class="platform-badge-row">
+                                <span class="platform-pill">@creator.PrimaryPlatform.ToUpper()</span>
+                                <span class="niche-pill">@creator.PrimaryNiche</span>
+                            </div>
+
+                            <div class="metrics-pill-box">
+                                <div class="metric-item">
+                                    <div class="val">@creator.FormattedViews</div>
+                                    <div class="lbl">Avg Views</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="val" style="color:var(--mint);">@creator.CurrentRating ★</div>
+                                    <div class="lbl">Rating (@creator.CurrentReviewCount)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="creator-footer">
+                            <div class="price-badge">
+                                <span>Deliverable from</span>
+                                <strong>@creator.PriceString</strong>
+                            </div>
+                            <a asp-controller="Campaigns" asp-action="Assign" asp-route-id="@creator.InfluencerId" class="btn-portal btn-ghost btn-sm">
+                                Assign Work
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">&#128269;</div>
+                    <h3>No creators match your filters</h3>
+                    <p>Try resetting some parameters or broadening your search terms.</p>
+                    <a asp-controller="Explore" asp-action="Global" class="btn-portal btn-mint" style="margin-top:16px;">
+                        Reset All Filters
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Server-Side Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination-wrapper">
+                @if (Model.HasPreviousPage)
+                {
+                    <a asp-action="Global"
+                       asp-route-page="@(Model.CurrentPage - 1)"
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       asp-route-targetMarket="@Model.targetMarket"
+                       asp-route-platform="@Model.Platform"
+                       asp-route-niche="@Model.Niche"
+                       asp-route-budgetRangeId="@Model.budgetRangeId"
+                       asp-route-sortBy="@Model.SortBy"
+                       class="page-btn">
+                        ← Prev
+                    </a>
+                }
+                else
+                {
+                    <span class="page-btn disabled">← Prev</span>
+                }
+
+                <div class="page-numbers">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        if (i == Model.CurrentPage)
+                        {
+                            <span class="page-num active">@i</span>
+                        }
+                        else if (i == 1 || i == Model.TotalPages || (i >= Model.CurrentPage - 1 && i <= Model.CurrentPage + 1))
+                        {
+                            <a asp-action="Global"
+                               asp-route-page="@i"
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-targetMarket="@Model.targetMarket"
+                               asp-route-platform="@Model.Platform"
+                               asp-route-niche="@Model.Niche"
+                               asp-route-budgetRangeId="@Model.budgetRangeId"
+                               asp-route-sortBy="@Model.SortBy"
+                               class="page-num">
+                                @i
+                            </a>
+                        }
+                        else if (i == Model.CurrentPage - 2 || i == Model.CurrentPage + 2)
+                        {
+                            <span class="page-dots">...</span>
+                        }
+                    }
+                </div>
+
+                @if (Model.HasNextPage)
+                {
+                    <a asp-action="Global"
+                       asp-route-page="@(Model.CurrentPage + 1)"
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       asp-route-targetMarket="@Model.targetMarket"
+                       asp-route-platform="@Model.Platform"
+                       asp-route-niche="@Model.Niche"
+                       asp-route-budgetRangeId="@Model.budgetRangeId"
+                       asp-route-sortBy="@Model.SortBy"
+                       class="page-btn">
+                        Next →
+                    </a>
+                }
+                else
+                {
+                    <span class="page-btn disabled">Next →</span>
+                }
+            </div>
+        }
+    </div>
+</main>

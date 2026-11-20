@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CREEOT.API/CREEOT.API.csproj" />
+  <Project Path="CREEOT.WEB/CREEOT.WEB.csproj" />
+</Solution>

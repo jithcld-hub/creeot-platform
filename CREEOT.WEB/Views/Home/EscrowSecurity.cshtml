@@ -1,0 +1,259 @@
+﻿@{
+    Layout = "_UserLayout";
+    ViewBag.Title = "CREEOT - Escrow Security & Milestone Protection";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/creeot-pages.css" asp-append-version="true" />
+}
+
+<main class="security-page">
+    <!-- Hero Section -->
+    <section class="security-hero">
+        <div class="container">
+            <div class="badge-verified">
+                <span class="pulse-dot"></span> Bank-Grade Capital & Deliverable Shield
+            </div>
+            <h1 class="hero-title">
+                Zero Financial Exposure.<br />
+                <span class="gradient-headline">100% Milestone-Protected Escrow.</span>
+            </h1>
+            <p class="hero-desc">
+                CREEOT eliminates the two biggest risks in influencer marketing: brands losing funds to undelivered content, and creators producing high-value media without&nbsp; guaranteed&nbsp;payment.
+            </p>
+            <br />
+            <div class="hero-cta-group">
+                <a asp-controller="Account" asp-action="SignUp" asp-route-role="Client" class="btn-portal btn-mint">
+                    Start Protected Campaign →
+                </a>
+                <a href="#how-it-works" class="btn-portal btn-ghost">
+                    See How Escrow Works
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Security Pillars -->
+    <section class="container pillars-section">
+        <div class="pillars-grid">
+            <div class="pillar-card">
+                <div class="pillar-icon">&#128274;</div>
+                <h3>Segregated Vault Accounts</h3>
+                <p>Deposited funds are held in regulated, ring-fenced escrow accounts. Capital is never mixed with platform operational balances or drawn upon until release conditions are certified.</p>
+                <div class="pillar-meta">Tier-1 Regulatory Compliance</div>
+            </div>
+
+            <div class="pillar-card highlight-card">
+                <div class="pillar-icon" style="color: var(--mint);">⚖</div>
+                <h3>Milestone Verification</h3>
+                <p>Campaign funds unlock exclusively against verified live milestones—such as draft review approval, live engagement checks, and link tracking verification.</p>
+                <div class="pillar-meta" style="color: var(--mint);">Granular Multi-Stage Releases</div>
+            </div>
+
+            <div class="pillar-card">
+                <div class="pillar-icon">&#128737;</div>
+                <h3>Neutral Dispute Mediation</h3>
+                <p>If deliverable scope, content guidelines, or contractual deadlines are breached, our neutral escrow compliance board steps in with evidence-based arbitration.</p>
+                <div class="pillar-meta">Fair & Transparent Resolution</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step-by-Step Interactive Flow -->
+    <section id="how-it-works" class="container">
+        <div class="escrow-process-box">
+            <div class="section-header" style="text-align: center; max-width: 600px; margin: 0 auto 50px;">
+                <h2 style="font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px;">The Lifecycle of an Escrow Campaign</h2>
+                <p style="color: var(--text-sub); font-size: 1rem;">From agreement to wallet payout: how funds remain locked and protected every step of the way.</p>
+            </div>
+
+            <div class="timeline-stepper">
+                <!-- Step 1 -->
+                <div class="stepper-node">
+                    <div class="node-marker">
+                        <span class="marker-num">01</span>
+                    </div>
+                    <div class="node-content">
+                        <h4>Scope & Milestone Agreement</h4>
+                        <p>Brand and creator formulate deliverables (e.g., 1x Instagram Reel + 3x Stories), posting schedule, usage rights, and budget inside CREEOT's digital contract.</p>
+                        <span class="node-tag">Binding Digital SOW</span>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="stepper-node">
+                    <div class="node-marker active">
+                        <span class="marker-num">02</span>
+                    </div>
+                    <div class="node-content">
+                        <h4>Upfront Capital Lock</h4>
+                        <p>The brand deposits the milestone amount. Funds are locked into CREEOT Escrow. The creator is notified that 100% of the compensation is secured before filming starts.</p>
+                        <span class="node-tag active">Funds Held in Holding Vault</span>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="stepper-node">
+                    <div class="node-marker">
+                        <span class="marker-num">03</span>
+                    </div>
+                    <div class="node-content">
+                        <h4>Content Draft & Live Publishing</h4>
+                        <p>The creator uploads the draft for brand feedback. Once approved, the creator posts live and submits proof of publication (live post URL + engagement telemetry).</p>
+                        <span class="node-tag">Deliverable Audit</span>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="stepper-node">
+                    <div class="node-marker">
+                        <span class="marker-num">04</span>
+                    </div>
+                    <div class="node-content">
+                        <h4>Approval & Instant Release</h4>
+                        <p>The brand approves the live submission with one click, or auto-release triggers after the inspection window expires. Funds move instantly into the creator’s wallet.</p>
+                        <span class="node-tag">Automated Settlement</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dual Benefit Comparison -->
+    <section class="container dual-benefits-section">
+        <div class="section-header" style="text-align: center; max-width: 600px; margin: 0 auto 50px;">
+            <h2 style="font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px;">Balanced Protection for Both Sides</h2>
+            <p style="color: var(--text-sub); font-size: 1rem;">A symmetrical financial structure built to foster trust in cross-border creator collaborations.</p>
+        </div>
+
+        <div class="benefits-grid">
+            <!-- Brand Column -->
+            <div class="benefit-panel brand-panel">
+                <div class="panel-header">
+                    <span class="badge-verified" style="padding: 4px 12px; margin-bottom: 12px;">For Companies & Brands</span>
+                    <h3>Risk-Free Hiring</h3>
+                </div>
+                <ul class="benefit-list">
+                    <li>
+                        <span class="check-icon">✔</span>
+                        <div>
+                            <strong>No advance payments to unknown accounts</strong>
+                            <p>Never transfer money directly into bank accounts before seeing certified deliverable drafts.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon">✔</span>
+                        <div>
+                            <strong>Inspection & revision windows</strong>
+                            <p>Retain full authorization to request script or edit changes based on agreed creative guidelines.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon">✔</span>
+                        <div>
+                            <strong>Guaranteed refund on non-delivery</strong>
+                            <p>If an influencer ghosts or misses delivery deadlines without cause, your locked funds are returned.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Creator Column -->
+            <div class="benefit-panel creator-panel">
+                <div class="panel-header">
+                    <span class="badge-verified" style="padding: 4px 12px; margin-bottom: 12px; color: #7d96ff; border-color: rgba(125, 150, 255, 0.3); background: rgba(125, 150, 255, 0.1);">For Creators & Talent</span>
+                    <h3>Guaranteed Compensation</h3>
+                </div>
+                <ul class="benefit-list">
+                    <li>
+                        <span class="check-icon" style="color: #7d96ff;">✔</span>
+                        <div>
+                            <strong>Eliminate payment chasing & 90-day terms</strong>
+                            <p>Say goodbye to Net-60 or Net-90 invoice delays. Work begins only when payment is already locked.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon" style="color: #7d96ff;">✔</span>
+                        <div>
+                            <strong>Shield against ghosting after posting</strong>
+                            <p>Brands cannot cancel or withdraw funds once content is delivered as specified in the milestone scope.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="check-icon" style="color: #7d96ff;">✔</span>
+                        <div>
+                            <strong>Multi-currency wallet payouts</strong>
+                            <p>Withdraw cleared campaign balances directly to your local bank account in INR, AED, or QAR.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Accordion -->
+    <section class="container faq-section">
+        <div class="section-header" style="text-align: center; max-width: 600px; margin: 0 auto 50px;">
+            <h2 style="font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px;">Frequently Asked Questions</h2>
+            <p style="color: var(--text-sub); font-size: 1rem;">Everything you need to know about deposits, dispute arbitration, and fees.</p>
+        </div>
+
+        <div class="faq-list">
+            <details class="faq-item">
+                <summary class="faq-question">
+                    <span>What happens if a creator fails to post the agreed content?</span>
+                    <span class="faq-toggle">+</span>
+                </summary>
+                <div class="faq-answer">
+                    <p>If a creator fails to submit proof of publication or misses the agreed turnaround deadline without an approved extension, the campaign triggers an alert. The brand can initiate a formal cancellation, and following a 48-hour compliance review, 100% of the locked escrow balance is refunded to the brand's original payment method or wallet.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">
+                    <span>How does dispute arbitration work?</span>
+                    <span class="faq-toggle">+</span>
+                </summary>
+                <div class="faq-answer">
+                    <p>If there is a disagreement regarding content quality, brief adherence, or revision limits, either party can click "Raise Dispute". Both parties submit evidence (the original agreement, uploaded drafts, feedback logs). CREEOT's neutral arbitration desk evaluates the submission against the digital SOW and issues a binding resolution within 3 business days.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">
+                    <span>When does the creator receive the payment?</span>
+                    <span class="faq-toggle">+</span>
+                </summary>
+                <div class="faq-answer">
+                    <p>Payment is released to the creator’s CREEOT Wallet immediately upon the brand clicking "Approve Deliverable". If a brand remains unresponsive after content is verified live, an automated 72-hour safety timer executes the release to protect creator compensation.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">
+                    <span>What currencies and payment gateways are supported?</span>
+                    <span class="faq-toggle">+</span>
+                </summary>
+                <div class="faq-answer">
+                    <p>We support local deposits and domestic bank payouts in Indian Rupee (INR), UAE Dirham (AED), and Qatari Riyal (QAR), as well as international cards (Visa, Mastercard) via encrypted payment gateways.</p>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <!-- Final CTA Banner -->
+    <section class="container" style="padding-bottom: 100px;">
+        <div class="security-cta-banner">
+            <h2>Ready to Run Frictionless, Protected Campaigns?</h2>
+            <p>Join thousands of brands and influencers transacting with total financial clarity.</p>
+            <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:24px;">
+                <a asp-controller="Account" asp-action="SignUp" asp-route-role="Client" class="btn-portal btn-mint">
+                    Register as Brand / Client
+                </a>
+                <a asp-controller="Account" asp-action="SignUp" asp-route-role="Influencer" class="btn-portal btn-ghost">
+                    Join as Creator
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
